@@ -25,7 +25,7 @@ const htmlTemplate = () => {
   if (process.env.NODE_ENV === 'test') return 'public/preview.html'
 }
 
-const PROXY_TARGET = 'https://bbmri-acc.gcc.rug.nl' // 'https://master.dev.molgenis.org'
+const PROXY_TARGET = 'https://dieuwke.gcc.rug.nl' // 'https://master.dev.molgenis.org'
 
 module.exports = {
   runtimeCompiler: true,
@@ -49,9 +49,6 @@ module.exports = {
         banner: bannerText
       }),
       new webpack.ProvidePlugin({
-        $: 'jquery',
-        jQuery: 'jquery',
-        'window.jQuery': 'jquery',
         Popper: ['popper.js', 'default']
       }),
       new GenerateJsonWebpackPlugin('config.json', {
