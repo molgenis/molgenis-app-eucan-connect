@@ -46,7 +46,7 @@ export default new Vuex.Store({
   },
   actions: {
     async getStudies ({ commit }, page = 0) {
-      const response = await api.get(`/api/data/eucan_study?page=${page}`)
+      const response = await api.get(`/api/data/eucan_study?size=15&page=${page}`)
       commit('setStudies', response)
     },
     async filterStudies ({ commit }, { countryCodes }) {

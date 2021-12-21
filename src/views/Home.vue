@@ -15,8 +15,21 @@
         </div>
       </div>
       <div class="col-10">
+        <div class="mt-4 mb-0">
+        <div class="d-flex justify-content-center mb-2">
+          <span>Number of studies: {{ studiesPageInfo.totalElements }}</span>
+        </div>
+          <b-pagination
+            v-model="currentPage"
+            @change="changePage"
+            :total-rows="studiesPageInfo.totalElements"
+            :per-page="studiesPageInfo.size"
+            align="center"
+            aria-controls="studies"></b-pagination>
+        </div>
         <div class="d-flex flex-wrap justify-content-end align-items-start">
           <div
+            id="studies"
             class="card border-dark"
             v-for="study of studies"
             :key="study.id">
@@ -41,6 +54,14 @@
             </div>
           </div>
         </div>
+          <b-pagination
+          class="mt-5"
+            v-model="currentPage"
+            @change="changePage"
+            :total-rows="studiesPageInfo.totalElements"
+            :per-page="studiesPageInfo.size"
+            align="center"
+            aria-controls="studies"></b-pagination>
       </div>
     </div>
   </div>
@@ -53,14 +74,15 @@ export default {
   data: function () {
     return {
       expand: [],
+      currentPage: 1,
       selectedCountries: []
     }
   },
   computed: {
-    ...mapState(['studies', 'countries'])
+    ...mapState(['studies', 'countries', 'studiesPageInfo'])
   },
   methods: {
-    ...mapActions(['filterStudies']),
+    ...mapActions(['filterStudies', 'getStudies']),
     studyDescription (description) {
       if (this.descriptionTooLong(description)) {
         return description.substr(0, 300) + '...'
@@ -79,6 +101,9 @@ export default {
     },
     filter () {
       this.filterStudies({ countryCodes: this.selectedCountries })
+    },
+    changePage (newPage) {
+      this.getStudies(newPage - 1)
     }
   }
 }
