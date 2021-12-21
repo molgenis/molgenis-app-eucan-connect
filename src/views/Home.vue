@@ -1,7 +1,19 @@
 <template>
   <div class="container-fluid pt-2">
     <div class="row">
-      <div class="col-2">----</div>
+      <div class="col-2">
+        <div class="card w-100">
+          <div class="card-header">Country</div>
+          <div class="card-body">
+            <b-check-group
+              v-model="selectedCountries"
+              :options="countries"
+              stacked
+              @change="filter">
+            </b-check-group>
+          </div>
+        </div>
+      </div>
       <div class="col-10">
         <div class="d-flex flex-wrap justify-content-end align-items-start">
           <div
@@ -10,7 +22,6 @@
             :key="study.id">
             <div class="card-header text-white bg-primary">
               {{ study.study_name }}
-
             </div>
             <div class="card-body">
               <p v-if="!expand.includes(study.id)" class="card-text">
@@ -36,18 +47,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'Home',
   data: function () {
     return {
-      expand: []
+      expand: [],
+      selectedCountries: []
     }
   },
   computed: {
-    ...mapState(['studies'])
+    ...mapState(['studies', 'countries'])
   },
   methods: {
+    ...mapActions(['filterStudies']),
     studyDescription (description) {
       if (this.descriptionTooLong(description)) {
         return description.substr(0, 300) + '...'
@@ -63,6 +76,9 @@ export default {
       } else {
         this.expand.push(id)
       }
+    },
+    filter () {
+      this.filterStudies({ countryCodes: this.selectedCountries })
     }
   }
 }
