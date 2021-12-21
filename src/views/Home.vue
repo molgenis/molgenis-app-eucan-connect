@@ -27,7 +27,7 @@
             align="center"
             aria-controls="studies"></b-pagination>
         </div>
-        <div class="d-flex flex-wrap justify-content-end align-items-start">
+        <div class="d-flex flex-wrap justify-content-start align-items-start ml-5">
           <div
             id="studies"
             class="card border-dark"
