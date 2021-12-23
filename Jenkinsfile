@@ -138,7 +138,7 @@ pipeline {
         branch 'master'
       }
       environment {
-        REPOSITORY = 'molgenis/molgenis-app-eucan-connect"
+        REPOSITORY = 'molgenis/molgenis-app-eucan-connect'
       }
       steps {
         timeout(time: 30, unit: 'MINUTES') {
