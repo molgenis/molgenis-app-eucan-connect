@@ -162,7 +162,12 @@ pipeline {
           sh "npm version ${RELEASE_SCOPE} -m '[ci skip] [npm-version] %s'"
 
           sh "git push --tags origin ${BRANCH_NAME}"
-          molgenisSlack(message: "${env.REPOSITORY} has been successfully deployed on ${env.LOCAL_REGISTRY}.", status:'SUCCESS', channel: "#release")
+
+          script {
+            env.NEW_VERSION = sh(script: "npm -s run env echo '$npm_package_version'", returnStdout: true).trim()
+          }
+
+          molgenisSlack(message: "${env.REPOSITORY} version ${env.NEW_VERSION} has been successfully deployed on ${env.LOCAL_REGISTRY}.", status:'SUCCESS', channel: "#release")
         }
       }
     }
