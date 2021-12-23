@@ -1,0 +1,65 @@
+{
+  "name": "molgenis-app-eucan-connect",
+  "version": "0.1.0",
+  "description": "This is the user interface for Eucan Connect. Here you can find studies/cohorts within multiple catalogues",
+  "main": "main.js",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit --collectCoverage",
+    "test:e2e": "vue-cli-service test:e2e",
+    "lint": "vue-cli-service lint",
+    "build:preview": "yarn build --mode test",
+    "check-ie": "es-check es5 'dist/js/*.js' --verbose",
+    "postversion": "yarn build; curl -v --user ${REGISTRY_CRED_USR}:${REGISTRY_CRED_PSW} --upload-file dist/$npm_package_name.v$npm_package_version.zip  https://${LOCAL_REGISTRY}/repository/appstore/$npm_package_name/$npm_package_version/$npm_package_name.v$npm_package_version.zip",
+    "preversion": "yarn install; yarn test:unit",
+    "unit": "vue-cli-service test:unit --collectCoverage"
+  },
+  "dependencies": {
+    "@molgenis/molgenis-api-client": "^3.0.0",
+    "@molgenis/rsql": "^0.1.1",
+    "bootstrap": "^4.5.3",
+    "bootstrap-vue": "^2.21.2",
+    "core-js": "^3.6.5",
+    "vue": "^2.6.14",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "@vue/test-utils": "^1.0.3",
+    "babel-eslint": "^10.1.0",
+    "eslint-plugin-vue": "^6.2.2",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^8.0.2",
+    "generate-json-webpack-plugin": "^1.0.0",
+    "vue-template-compiler": "^2.6.11",
+    "zip-webpack-plugin": "^3.0.0"
+  },
+  "peerDependencies": {
+    "bootstrap": "4.3.1",
+    "popper.js": "1.16.1",
+    "PortalVue": "v2.1.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/molgenis/molgenis-app-eucan-connect.git"
+  },
+  "author": "Jelmer Veen <https://github.com/jelmerveen>",
+  "license": "LGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/molgenis/molgenis-app-eucan-connect/issues"
+  },
+  "homepage": "https://github.com/molgenis/molgenis-app-eucan-connect#readme"
+}
