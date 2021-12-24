@@ -1,11 +1,23 @@
 import api from '@molgenis/molgenis-api-client'
 import { transformToRSQL } from '@molgenis/rsql'
 
-// move these later to molgenis/rsql
-const queryBuilder = (attribute, filters, comparison) => filters.length > 0
-  ? [{ selector: attribute, comparison, arguments: filters }]
-  : []
+function splitText (text) {
+  return text.trim().split(' ')
+}
 
+function queryBuilder (attribute, filters, comparison) {
+  if (!filters.length) return []
+
+  switch (comparison) {
+    case '=in=':
+      return [{ selector: attribute, comparison, arguments: filters }]
+
+    case '=like=':
+      return splitText(filters).map(filter => ({ selector: attribute, comparison: '=like=', arguments: filter }))
+    default:
+      return []
+  }
+}
 export default {
   async contactIdQuery (countryCodes) {
     if (!countryCodes || !countryCodes.length) return ''
@@ -27,12 +39,12 @@ export default {
     })
   },
   async textSearchQuery (text) {
-    if (!text) return ''
+    // the regex '/\S/gmi' means any non-whitespace character, so if a user has only spaces
+    // it won't search that
+    if (!text || !text.match(/\S/gmi)) return ''
 
-    const searchTerms = text.split(' ')
-
-    let operands = queryBuilder('study_name', searchTerms, '=like=')
-    operands = operands.concat(queryBuilder('acronym', searchTerms, '=like='))
+    let operands = queryBuilder('study_name', text, '=like=')
+    operands = operands.concat(queryBuilder('acronym', text, '=like='))
 
     return transformToRSQL({
       operator: 'OR',
