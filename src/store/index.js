@@ -1,27 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import api from '@molgenis/molgenis-api-client'
-import { transformToRSQL } from '@molgenis/rsql'
+import rsqlService from '../logic/rsqlService'
 
 Vue.use(Vuex)
-
-// move these later to molgenis/rsql
-const queryBuilder = (attribute, filters, comparison) => filters.length > 0
-  ? [{ selector: attribute, comparison, arguments: filters }]
-  : []
-
-// const createComparisons = (attribute, filters) =>
-//   filters.map(filterValue => ({ selector: attribute, comparison: '==', arguments: filterValue }))
-
-const createInQuery = (attribute, filters) => filters.length > 0
-  ? queryBuilder(attribute, filters, '=in=')
-  : []
 
 export default new Vuex.Store({
   state: {
     studies: [],
     studiesPageInfo: {},
-    countries: []
+    countries: [],
+    selectedCountries: [],
+    search: ''
   },
   mutations: {
     setStudies (state, data) {
@@ -42,35 +32,25 @@ export default new Vuex.Store({
         }
       }
       state.countries = countryOptions
+    },
+    setSelectedCountries (state, newSelection) {
+      state.selectedCountries = newSelection
     }
   },
   actions: {
-    async getStudies ({ commit }, page = 0) {
-      const response = await api.get(`/api/data/eucan_study?size=15&page=${page}`)
+    async getStudies ({ state, commit }, page = 0) {
+      const rawQuerys = [
+        await rsqlService.contactIdQuery(state.selectedCountries),
+        await rsqlService.textSearchQuery(state.search)]
+
+      const query = rsqlService.combineQuerys(rawQuerys)
+
+      let url = `/api/data/eucan_study?size=15&page=${page}`
+
+      if (query) url += query
+
+      const response = await api.get(url)
       commit('setStudies', response)
-    },
-    async filterStudies ({ commit }, { countryCodes }) {
-      if (!countryCodes.length) {
-        this.dispatch('getStudies')
-        return
-      }
-
-      const contactRsql = transformToRSQL({
-        operator: 'OR',
-        operands: createInQuery('country.iso2_code', countryCodes)
-      })
-
-      // get id's of contacts of country.
-      const contactResponse = await api.get(`/api/data/eucan_persons?q=${contactRsql}`)
-
-      const contactIds = contactResponse.items.map(item => item.data.id)
-
-      const studyRsql = transformToRSQL({
-        operator: 'OR',
-        operands: createInQuery('contacts.id', contactIds)
-      })
-      const studyResponse = await api.get(`/api/data/eucan_study?q=${studyRsql}`)
-      commit('setStudies', studyResponse)
     },
     /* Based on the list of contacts, get all the associated countries */
     async getAvailableCountries ({ commit }) {

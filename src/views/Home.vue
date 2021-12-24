@@ -3,10 +3,17 @@
     <div class="row">
       <div class="col-2">
         <div class="card w-100">
+          <div class="card-header">Search</div>
+          <div class="card-body">
+            <b-input v-model="searchSelectionModel" @keyup="filter" />
+            <b-button class="w-100 mt-2" variant="info">Search</b-button>
+          </div>
+        </div>
+        <div class="card w-100">
           <div class="card-header">Country</div>
           <div class="card-body">
             <b-check-group
-              v-model="selectedCountries"
+              v-model="countrySelectionModel"
               :options="countries"
               stacked
               @change="filter">
@@ -16,9 +23,9 @@
       </div>
       <div class="col-10">
         <div class="mt-4 mb-0">
-        <div class="d-flex justify-content-center mb-2">
-          <span>Number of studies: {{ studiesPageInfo.totalElements }}</span>
-        </div>
+          <div class="d-flex justify-content-center mb-2">
+            <span>Number of studies: {{ studiesPageInfo.totalElements }}</span>
+          </div>
           <b-pagination
             v-model="currentPage"
             @change="changePage"
@@ -27,7 +34,8 @@
             align="center"
             aria-controls="studies"></b-pagination>
         </div>
-        <div class="d-flex flex-wrap justify-content-start align-items-start ml-5">
+        <div
+          class="d-flex flex-wrap justify-content-start align-items-start ml-5">
           <div
             id="studies"
             class="card border-dark"
@@ -54,35 +62,51 @@
             </div>
           </div>
         </div>
-          <b-pagination
+        <b-pagination
           class="mt-5"
-            v-model="currentPage"
-            @change="changePage"
-            :total-rows="studiesPageInfo.totalElements"
-            :per-page="studiesPageInfo.size"
-            align="center"
-            aria-controls="studies"></b-pagination>
+          v-model="currentPage"
+          @change="changePage"
+          :total-rows="studiesPageInfo.totalElements"
+          :per-page="studiesPageInfo.size"
+          align="center"
+          aria-controls="studies"></b-pagination>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 export default {
   name: 'Home',
   data: function () {
     return {
       expand: [],
-      currentPage: 1,
-      selectedCountries: []
+      currentPage: 1
     }
   },
   computed: {
-    ...mapState(['studies', 'countries', 'studiesPageInfo'])
+    ...mapState(['studies', 'countries', 'search', 'studiesPageInfo']),
+    countrySelectionModel: {
+      get () {
+        return this.selectedCountries
+      },
+      set (newValue) {
+        this.$store.state.selectedCountries = newValue
+      }
+    },
+    searchSelectionModel: {
+      get () {
+        return this.search
+      },
+      set (newValue) {
+        this.$store.state.search = newValue
+      }
+    }
   },
   methods: {
     ...mapActions(['filterStudies', 'getStudies']),
+    ...mapMutations(['setAvailableCountries']),
     studyDescription (description) {
       if (this.descriptionTooLong(description)) {
         return description.substr(0, 300) + '...'
@@ -100,7 +124,8 @@ export default {
       }
     },
     filter () {
-      this.filterStudies({ countryCodes: this.selectedCountries })
+      this.getStudies(0)
+      this.currentPage = 1
     },
     changePage (newPage) {
       this.getStudies(newPage - 1)
@@ -122,5 +147,10 @@ export default {
   max-width: 300px;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.info-text {
+  font-size:0.8rem;
+  font-style: italic;
 }
 </style>
