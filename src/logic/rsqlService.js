@@ -43,13 +43,19 @@ export default {
     // it won't search that
     if (!text || !text.match(/\S/gmi)) return ''
 
-    let operands = queryBuilder('study_name', text, '=like=')
-    operands = operands.concat(queryBuilder('acronym', text, '=like='))
-
-    return transformToRSQL({
-      operator: 'OR',
-      operands
+    const nameQuery = transformToRSQL({
+      operator: 'AND',
+      operands: queryBuilder('study_name', text, '=like=')
     })
+
+    const acronymQuery = transformToRSQL({
+      operator: 'AND',
+      operands: queryBuilder('acronym', text, '=like=')
+    })
+
+    // return them both concatenated as an OR
+
+    return [nameQuery, acronymQuery].join(',')
   },
   combineQuerys (querys) {
     let query = ''

@@ -92,7 +92,7 @@ export default {
         return this.selectedCountries
       },
       set (newValue) {
-        this.$store.state.selectedCountries = newValue
+        this.setSelectedCountries(newValue)
       }
     },
     searchSelectionModel: {
@@ -100,13 +100,13 @@ export default {
         return this.search
       },
       set (newValue) {
-        this.$store.state.search = newValue
+        this.setSearch(newValue)
       }
     }
   },
   methods: {
     ...mapActions(['filterStudies', 'getStudies']),
-    ...mapMutations(['setAvailableCountries']),
+    ...mapMutations(['setAvailableCountries', 'setSearch', 'setSelectedCountries']),
     studyDescription (description) {
       if (this.descriptionTooLong(description)) {
         return description.substr(0, 300) + '...'

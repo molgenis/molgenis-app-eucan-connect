@@ -35,6 +35,9 @@ export default new Vuex.Store({
     },
     setSelectedCountries (state, newSelection) {
       state.selectedCountries = newSelection
+    },
+    setSearch (state, newSearch) {
+      state.search = newSearch
     }
   },
   actions: {
