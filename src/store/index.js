@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import api from '@molgenis/molgenis-api-client'
 import rsqlService from '../logic/rsqlService'
+import { sortAsc, sortDesc, unique } from '../logic/predicates'
 
 Vue.use(Vuex)
 
@@ -11,13 +12,26 @@ export default new Vuex.Store({
     studiesPageInfo: {},
     countries: [],
     selectedCountries: [],
-    search: ''
+    search: '',
+    sourceCatalogues: [],
+    selectedSources: [],
+    startYears: [],
+    selectedStartYears: []
   },
   mutations: {
     setStudies (state, data) {
       state.studies = data.items.map(item => item.data) /* extract only the data part */
       // Data for use in pagination.
       state.studiesPageInfo = data.page
+    },
+    setCatalogueSources (state, data) {
+      state.sourceCatalogues = data.items.map(item => ({ text: item.data.description, value: item.data.id })).sort(sortAsc('text'))
+    },
+    setStartYears (state, data) {
+      state.startYears = data.items
+        .map(item => ({ text: item.data.start_year, value: item.data.start_year }))
+        .filter(unique('value'))
+        .sort(sortDesc('value'))
     },
     setAvailableCountries (state, data) {
       const distinctCountries = [] // to keep track of added countries
@@ -31,20 +45,28 @@ export default new Vuex.Store({
           distinctCountries.push(country.data.country_name)
         }
       }
-      state.countries = countryOptions
+      state.countries = countryOptions.sort(sortAsc('text'))
     },
     setSelectedCountries (state, newSelection) {
       state.selectedCountries = newSelection
     },
     setSearch (state, newSearch) {
       state.search = newSearch
+    },
+    setSelectedSources (state, newSources) {
+      state.selectedSources = newSources
+    },
+    setSelectedStartYears (state, newYears) {
+      state.selectedStartYears = newYears
     }
   },
   actions: {
     async getStudies ({ state, commit }, page = 0) {
       const rawQuerys = [
         await rsqlService.contactIdQuery(state.selectedCountries),
-        await rsqlService.textSearchQuery(state.search)]
+        await rsqlService.textSearchQuery(state.search),
+        await rsqlService.sourceQuery(state.selectedSources),
+        await rsqlService.startYearQuery(state.selectedStartYears)]
 
       const query = rsqlService.combineQuerys(rawQuerys)
 
@@ -59,6 +81,14 @@ export default new Vuex.Store({
     async getAvailableCountries ({ commit }) {
       const response = await api.get('/api/data/eucan_persons?filter=country&expand=country')
       commit('setAvailableCountries', response)
+    },
+    async getAvailableSourceCatalogues ({ commit }) {
+      const response = await api.get('/api/data/eucan_source_catalogues')
+      commit('setCatalogueSources', response)
+    },
+    async getAvailableStartYears ({ commit }) {
+      const response = await api.get('/api/data/eucan_study?filter=start_year&size=10000')
+      commit('setStartYears', response)
     }
   }
 })

@@ -9,11 +9,13 @@ import { mapActions } from 'vuex'
 
 export default {
   methods: {
-    ...mapActions(['getStudies', 'getAvailableCountries'])
+    ...mapActions(['getStudies', 'getAvailableCountries', 'getAvailableSourceCatalogues', 'getAvailableStartYears'])
   },
   mounted () {
     this.getStudies()
+    this.getAvailableSourceCatalogues()
     this.getAvailableCountries()
+    this.getAvailableStartYears()
   }
 }
 </script>
@@ -22,5 +24,14 @@ export default {
 .card-header {
   background-color: rgba(0, 0, 0, 0.03);
   border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-body.filter {
+  max-height:250px;
+  overflow-y:auto
+}
+
+body {
+  background-color: #fafafa;
 }
 </style>

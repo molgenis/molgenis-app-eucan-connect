@@ -57,6 +57,22 @@ export default {
 
     return [nameQuery, acronymQuery].join(',')
   },
+  async sourceQuery (sources) {
+    if (!sources || !sources.length) return ''
+
+    return transformToRSQL({
+      operator: 'OR',
+      operands: queryBuilder('source_catalogue.id', sources, '=in=')
+    })
+  },
+  async startYearQuery (startYears) {
+    if (!startYears || !startYears.length) return ''
+
+    return transformToRSQL({
+      operator: 'OR',
+      operands: queryBuilder('start_year', startYears, '=in=')
+    })
+  },
   combineQuerys (querys) {
     let query = ''
 

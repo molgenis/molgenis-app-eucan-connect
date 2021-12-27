@@ -1,17 +1,40 @@
 <template>
   <div class="container-fluid pt-2">
     <div class="row">
-      <div class="col-2">
+      <div class="col-2 pr-0">
         <div class="card w-100">
           <div class="card-header">Search</div>
-          <div class="card-body">
+          <div class="card-body filter">
             <b-input v-model="searchSelectionModel" @keyup="filter" />
             <b-button class="w-100 mt-2" variant="info">Search</b-button>
+            <span class="info-text">Search on title or acronym.</span>
+          </div>
+        </div>
+        <div class="card w-100">
+          <div class="card-header">Catalogues</div>
+          <div class="card-body filter">
+            <b-check-group
+              v-model="sourceSelectionModel"
+              :options="sourceCatalogues"
+              stacked
+              @change="filter">
+            </b-check-group>
+          </div>
+        </div>
+        <div class="card w-100">
+          <div class="card-header">Start year</div>
+          <div class="card-body filter">
+            <b-check-group
+              v-model="startSelectionModel"
+              :options="startYears"
+              stacked
+              @change="filter">
+            </b-check-group>
           </div>
         </div>
         <div class="card w-100">
           <div class="card-header">Country</div>
-          <div class="card-body">
+          <div class="card-body filter">
             <b-check-group
               v-model="countrySelectionModel"
               :options="countries"
@@ -21,7 +44,7 @@
           </div>
         </div>
       </div>
-      <div class="col-10">
+      <div class="col-10 px-0">
         <div class="mt-4 mb-0">
           <div class="d-flex justify-content-center mb-2">
             <span>Number of studies: {{ studiesPageInfo.totalElements }}</span>
@@ -86,7 +109,17 @@ export default {
     }
   },
   computed: {
-    ...mapState(['studies', 'countries', 'search', 'studiesPageInfo']),
+    ...mapState([
+      'studies',
+      'countries',
+      'search',
+      'sourceCatalogues',
+      'studiesPageInfo',
+      'selectedCountries',
+      'selectedSources',
+      'startYears',
+      'selectedStartYears'
+    ]),
     countrySelectionModel: {
       get () {
         return this.selectedCountries
@@ -102,16 +135,38 @@ export default {
       set (newValue) {
         this.setSearch(newValue)
       }
+    },
+    sourceSelectionModel: {
+      get () {
+        return this.selectedSources
+      },
+      set (newValue) {
+        this.setSelectedSources(newValue)
+      }
+    },
+    startSelectionModel: {
+      get () {
+        return this.selectedStartYears
+      },
+      set (newValue) {
+        this.setSelectedStartYears(newValue)
+      }
     }
   },
   methods: {
     ...mapActions(['filterStudies', 'getStudies']),
-    ...mapMutations(['setAvailableCountries', 'setSearch', 'setSelectedCountries']),
+    ...mapMutations([
+      'setAvailableCountries',
+      'setSearch',
+      'setSelectedCountries',
+      'setSelectedSources',
+      'setSelectedStartYears'
+    ]),
     studyDescription (description) {
       if (this.descriptionTooLong(description)) {
         return description.substr(0, 300) + '...'
       }
-      return description
+      return description || 'No description available'
     },
     descriptionTooLong (description) {
       return description && description.length > 300
@@ -150,7 +205,7 @@ export default {
 }
 
 .info-text {
-  font-size:0.8rem;
+  font-size: 0.8rem;
   font-style: italic;
 }
 </style>
