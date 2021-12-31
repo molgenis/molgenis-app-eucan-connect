@@ -16,6 +16,9 @@
     "unit": "vue-cli-service test:unit --collectCoverage"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/vue-fontawesome": "^2.0.6",
     "@molgenis/molgenis-api-client": "^3.0.0",
     "@molgenis/rsql": "^0.1.1",
     "bootstrap": "^4.5.3",
@@ -32,25 +35,25 @@
     "@vue/cli-plugin-unit-jest": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "@vue/test-utils": "^1.0.3",
+    "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "@vue/eslint-config-standard": "^5.1.2",
-    "@vue/test-utils": "^1.0.3",
-    "babel-eslint": "^10.1.0",
     "eslint-plugin-vue": "^6.2.2",
+    "generate-json-webpack-plugin": "^1.0.0",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.2",
-    "generate-json-webpack-plugin": "^1.0.0",
     "vue-template-compiler": "^2.6.11",
     "zip-webpack-plugin": "^3.0.0"
   },
   "peerDependencies": {
+    "PortalVue": "v2.1.7",
     "bootstrap": "4.3.1",
-    "popper.js": "1.16.1",
-    "PortalVue": "v2.1.7"
+    "popper.js": "1.16.1"
   },
   "repository": {
     "type": "git",

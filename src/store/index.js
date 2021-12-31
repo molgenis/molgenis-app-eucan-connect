@@ -61,6 +61,17 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    async getSimilarStudies (_, acronym) {
+      const searchText = acronym.split(' ')
+      const query = await rsqlService.acronymSearch(searchText[0])
+      if (!query) return []
+
+      const url = `/api/data/eucan_study?size=10000&q=${query}`
+
+      const response = await api.get(url)
+
+      return response.items.filter(f => f.data.acronym !== acronym)
+    },
     async getStudies ({ state, commit }, page = 0) {
       const rawQuerys = [
         await rsqlService.contactIdQuery(state.selectedCountries),
@@ -76,6 +87,18 @@ export default new Vuex.Store({
 
       const response = await api.get(url)
       commit('setStudies', response)
+    },
+    async getStudy (_, id) {
+      const url = `/api/data/eucan_study/${id}?expand=populations`
+      const response = await api.get(url)
+      if (response.data.populations.items.length) {
+        for (const item of response.data.populations.items) {
+          // fetch one level deeper
+          const critResponse = await api.get(item.data.selection_criteria.links.self)
+          item.data.selection_criteria = critResponse.items.map(r => r.data)
+        }
+      }
+      return response
     },
     /* Based on the list of contacts, get all the associated countries */
     async getAvailableCountries ({ commit }) {

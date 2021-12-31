@@ -64,8 +64,14 @@
             class="card border-dark"
             v-for="study of studies"
             :key="study.id">
-            <div class="card-header text-white bg-primary">
-              {{ study.study_name }}
+            <div class="card-header text-white bg-primary p-2">
+              <router-link :to="study.id" class="text-white">
+                <font-awesome-icon
+                  title="Study details"
+                  class="float-right m-1 study-details"
+                  :icon="['far', 'arrow-alt-circle-right']"/>
+              </router-link>
+              <span> {{ study.study_name }}</span>
             </div>
             <div class="card-body">
               <p v-if="!expand.includes(study.id)" class="card-text">
@@ -207,5 +213,10 @@ export default {
 .info-text {
   font-size: 0.8rem;
   font-style: italic;
+}
+
+.study-details {
+  width: 1.2rem;
+  height: 1.2rem;
 }
 </style>

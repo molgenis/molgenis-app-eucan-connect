@@ -48,14 +48,22 @@ export default {
       operands: queryBuilder('study_name', text, '=like=')
     })
 
+    const acronymQuery = await this.acronymSearch(text)
+    // return them both concatenated as an OR
+
+    return [nameQuery, acronymQuery].join(',')
+  },
+  async acronymSearch (text) {
+    // the regex '/\S/gmi' means any non-whitespace character, so if a user has only spaces
+    // it won't search that
+    if (!text || !text.match(/\S/gmi)) return ''
+
     const acronymQuery = transformToRSQL({
       operator: 'AND',
       operands: queryBuilder('acronym', text, '=like=')
     })
 
-    // return them both concatenated as an OR
-
-    return [nameQuery, acronymQuery].join(',')
+    return acronymQuery
   },
   async sourceQuery (sources) {
     if (!sources || !sources.length) return ''
