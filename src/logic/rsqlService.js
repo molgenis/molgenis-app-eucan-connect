@@ -90,7 +90,7 @@ export default {
     query = '&q='
 
     // filter out empty queries
-    const queryStrings = querys.filter(q => q !== '')
+    const queryStrings = querys.filter(q => q !== '' && q !== undefined)
 
     // construct the complete RSQL strong
     for (const queryString of queryStrings) {
