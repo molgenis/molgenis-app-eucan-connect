@@ -174,7 +174,7 @@ export default {
       return description || 'No description available'
     },
     descriptionTooLong (description) {
-      return description && description.length > 300
+      return description && description.length > 200
     },
     toggleDescription (id) {
       if (this.expand.includes(id)) {
