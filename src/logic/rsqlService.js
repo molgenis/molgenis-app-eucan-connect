@@ -14,8 +14,9 @@ function queryBuilder (attribute, filters, comparison) {
 
     case '=like=':
       return splitText(filters).map(filter => ({ selector: attribute, comparison: '=like=', arguments: filter }))
+
     default:
-      return []
+      throw new Error(`Query of type ${comparison} is not implemented yet.`)
   }
 }
 export default {
