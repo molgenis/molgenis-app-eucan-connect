@@ -103,11 +103,11 @@ pipeline {
         }
         post {
             success {
-                molgenisSlack(message: "PR Preview available on https://${NAME}.dev.molgenis.org", status:'INFO', channel: '#pr-app-team')
+                molgenisSlack(message: "PR Preview available on https://${NAME}.dev.molgenis.org", status:'INFO', channel: '#hubot')
                 container('node') {
                     sh "set +x; curl -X POST -H 'Content-Type: application/json' -H 'Authorization: token ${GITHUB_TOKEN}' " +
                         "--data '{\"body\":\":star: PR Preview available on https://${NAME}.dev.molgenis.org\"}' " +
-                        "https://api.github.com/repos/molgenis/molgenis-app-biobank-explorer/issues/${CHANGE_ID}/comments"
+                        "https://api.github.com/repos/molgenis/molgenis-app-eucan-connect/issues/${CHANGE_ID}/comments"
                 }
             }
         }
