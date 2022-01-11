@@ -1,32 +1,37 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+  <div class="pb-4">
     <router-view />
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+import { mapActions } from 'vuex'
+
+export default {
+  methods: {
+    ...mapActions(['getStudies', 'getAvailableCountries', 'getAvailableSourceCatalogues', 'getAvailableStartYears'])
+  },
+  mounted () {
+    this.getStudies()
+    this.getAvailableSourceCatalogues()
+    this.getAvailableCountries()
+    this.getAvailableStartYears()
+  }
+}
+</script>
+<style>
+/* Original bootstrap */
+.card-header {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 
-#nav {
-  padding: 30px;
+.card-body.filter {
+  max-height:250px;
+  overflow-y:auto
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+body {
+  background-color: #fafafa;
 }
 </style>
