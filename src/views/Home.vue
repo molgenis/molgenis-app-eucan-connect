@@ -6,7 +6,7 @@
           <div class="card-header">Search</div>
           <div class="card-body filter">
             <b-input v-model="searchSelectionModel" @keyup="filter" />
-            <b-button class="w-100 mt-2" variant="info">Search</b-button>
+            <b-button class="w-100 mt-2" variant="info" @click="filter">Search</b-button>
             <span class="info-text">Search on title or acronym.</span>
           </div>
         </div>
@@ -60,18 +60,17 @@
         <div
           class="d-flex flex-wrap justify-content-start align-items-start ml-5">
           <div
-            id="studies"
-            class="card border-dark"
+            class="card border-dark studies"
             v-for="study of studies"
             :key="study.id">
             <div class="card-header text-white bg-primary p-2">
               <router-link :to="study.id" class="text-white">
+                <span class="d-inline-block study-title"> {{ study.study_name }}</span>
                 <font-awesome-icon
                   title="Study details"
                   class="float-right m-1 study-details"
                   :icon="['far', 'arrow-alt-circle-right']"/>
               </router-link>
-              <span> {{ study.study_name }}</span>
             </div>
             <div class="card-body">
               <p v-if="!expand.includes(study.id)" class="card-text">
@@ -170,7 +169,7 @@ export default {
     ]),
     studyDescription (description) {
       if (this.descriptionTooLong(description)) {
-        return description.substr(0, 300) + '...'
+        return description.substr(0, 200).trim() + '...'
       }
       return description || 'No description available'
     },
@@ -200,6 +199,14 @@ export default {
   width: 30%;
   margin-top: 1.5rem;
   margin-right: 1.5rem;
+}
+
+.studies {
+  min-height: 16rem;
+}
+
+.study-title {
+  width:90%;
 }
 
 .folded {

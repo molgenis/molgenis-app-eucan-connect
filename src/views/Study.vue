@@ -19,7 +19,7 @@
           <populations-table :populations="populations" />
         </div>
         <div v-if="similarStudies.length">
-          <h3 class="mt-3" >Possible related studies:</h3>
+          <h3 class="mt-3" >Possible related studies</h3>
           <study-property-table :studies="similarStudies" />
         </div>
       </div>
