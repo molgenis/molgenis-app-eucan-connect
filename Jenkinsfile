@@ -114,7 +114,7 @@ pipeline {
     }
     stage('Build: [ master ]') {
       when {
-        branch 'master'
+        branch 'main'
       }
       steps {
         milestone 1
@@ -134,7 +134,7 @@ pipeline {
     }
     stage('Release: [ master ]') {
       when {
-        branch 'master'
+        branch 'main'
       }
       environment {
         REPOSITORY = 'molgenis/molgenis-app-eucan-connect'
