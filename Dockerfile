@@ -8,7 +8,6 @@ COPY docker/config/default.conf.template /etc/nginx/conf.d/
 COPY docker/entry.sh /
 RUN chmod +x entry.sh
 COPY dist/js/ /usr/share/nginx/html/js/
-COPY dist/img/ /usr/share/nginx/html/img/
 COPY dist/index.html /usr/share/nginx/html/
 ENTRYPOINT ["/entry.sh"]
 CMD ["nginx", "-g", "daemon off;"]
