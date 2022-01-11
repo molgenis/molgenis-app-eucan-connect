@@ -4,6 +4,9 @@ server {
   location /api {
     proxy_pass https://dieuwke.gcc.rug.nl;
   }
+  location /login {
+    proxy_pass https://dieuwke.gcc.rug.nl;
+  }
   location / {
     root /usr/share/nginx/html;
     autoindex on;
