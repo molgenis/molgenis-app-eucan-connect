@@ -163,7 +163,7 @@ pipeline {
           sh "git push --tags origin ${BRANCH_NAME}"
 
           script {
-            env.NEW_VERSION = sh(script: "npm -s run env echo '$npm_package_version'", returnStdout: true).trim()
+            env.NEW_VERSION = sh(script: 'node -pe "require('./package.json')['version']"', returnStdout: true).trim()
           }
 
           molgenisSlack(message: "${env.REPOSITORY} version ${env.NEW_VERSION} has been successfully deployed on ${env.LOCAL_REGISTRY}.", status:'SUCCESS', channel: "#release")
