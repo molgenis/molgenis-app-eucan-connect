@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link class="d-inline-block ml-4 mt-3" to="/">Back</router-link>
-    <div class="card border-dark mx-auto w-75 mt-4">
+    <div class="card mx-auto w-75 mt-4">
       <div
         class="card-header text-white bg-primary p-2"
         v-if="Object.keys(study)">

@@ -59,13 +59,11 @@
         </div>
         <div
           class="d-flex flex-wrap justify-content-start align-items-start ml-5">
-          <div
-            class="card border-dark studies"
-            v-for="study of studies"
-            :key="study.id">
+          <div class="card studies" v-for="study of studies" :key="study.id">
             <div class="card-header text-white bg-primary p-2">
               <router-link :to="study.id" class="text-white">
-                <span class="d-inline-block study-title"> {{ study.study_name }}</span>
+                <span class="d-inline-block study-title">
+                  {{ study.study_name }}</span>
                 <font-awesome-icon
                   title="Study details"
                   class="float-right m-1 study-details"
@@ -88,6 +86,7 @@
                   class="float-right mt-1">read less</b-link>
               </p>
             </div>
+            <small class="badge badge-primary catalogue-badge">{{ study.source_catalogue.data.description }}</small>
           </div>
         </div>
         <b-pagination
@@ -195,6 +194,11 @@ export default {
 </script>
 
 <style scoped>
+.catalogue-badge {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
 .card {
   width: 30%;
   margin-top: 1.5rem;
@@ -206,7 +210,7 @@ export default {
 }
 
 .study-title {
-  width:90%;
+  width: 90%;
 }
 
 .folded {
