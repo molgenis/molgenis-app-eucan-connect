@@ -11,7 +11,7 @@
               {{ item.label }}
             </th>
             <td class="pl-5">
-              <a v-if="item.type === 'url'" :href="study[item.prop]">
+              <a v-if="item.type === 'url'" :href="createHref(study[item.prop])" target="_blank">
                 {{ study[item.prop] }}</a>
               <span v-else>{{ study[item.prop] }}</span>
             </td>
@@ -58,6 +58,15 @@ export default {
           type: 'url'
         }
       ]
+    }
+  },
+  methods: {
+    createHref (url) {
+      if (url.substring(0, 4) !== 'http') {
+        return `https://${url}`
+      } else {
+        return url
+      }
     }
   }
 }
