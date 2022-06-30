@@ -51,11 +51,6 @@ export default {
           label: 'Website:',
           prop: 'website',
           type: 'url'
-        },
-        {
-          label: 'Data source:',
-          prop: 'source_data',
-          type: 'url'
         }
       ]
     }
