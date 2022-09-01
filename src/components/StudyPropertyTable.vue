@@ -6,14 +6,14 @@
       class="similar-studies-table">
       <tbody>
         <tr v-for="item of properties" :key="item.prop">
-          <template v-if="study[item.prop]">
+          <template>
             <th role="label" class="mr-3 property-header">
               {{ item.label }}
             </th>
             <td class="pl-5">
-              <a v-if="item.type === 'url'" :href="createHref(study[item.prop])" target="_blank">
-                {{ study[item.prop] }}</a>
-              <span v-else>{{ study[item.prop] }}</span>
+              <a v-if="item.type === 'url' && study[item.prop]" :href="createHref(study[item.prop])" target="_blank">
+                {{ study[item.prop] || '-' }}</a>
+              <span v-else>{{ study[item.prop] || '-' }}</span>
             </td>
           </template>
         </tr>
