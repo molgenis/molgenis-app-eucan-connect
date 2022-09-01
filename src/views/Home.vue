@@ -63,11 +63,8 @@
             <div class="card-header text-white bg-primary p-2">
               <router-link :to="study.id" class="text-white">
                 <span class="d-inline-block study-title">
-                  {{ study.study_name }}</span>
-                <font-awesome-icon
-                  title="Study details"
-                  class="float-right m-1 study-details"
-                  :icon="['far', 'arrow-alt-circle-right']"/>
+                  {{ study.study_name }}
+                </span>
               </router-link>
             </div>
             <div class="card-body">
@@ -86,7 +83,24 @@
                   class="float-right mt-1">read less</b-link>
               </p>
             </div>
-            <small class="badge badge-primary catalogue-badge">{{ study.source_catalogue.data.description }}</small>
+            <div class="badge badge-primary catalogue-badge p-1">
+              <a
+                :href="createHref(study.source_catalogue.data.catalogue_url)"
+                target="_blank"
+                class="
+                  d-flex
+                  justify-content-between
+                  align-items-center
+                  text-white
+                ">
+                <span class="to-catalogue"></span>
+                <span>Go to {{ study.source_catalogue.data.description }}</span>
+                <font-awesome-icon
+                  :title="`Go to ${study.source_catalogue.data.description}`"
+                  class="to-catalogue"
+                  :icon="['far', 'arrow-alt-circle-right']"/>
+              </a>
+            </div>
           </div>
         </div>
         <b-pagination
@@ -188,6 +202,13 @@ export default {
     },
     changePage (newPage) {
       this.getStudies(newPage - 1)
+    },
+    createHref (url) {
+      if (url.substring(0, 4) !== 'http') {
+        return `https://${url}`
+      } else {
+        return url
+      }
     }
   }
 }
@@ -195,6 +216,7 @@ export default {
 
 <style scoped>
 .catalogue-badge {
+  font-size: 80%;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
@@ -206,19 +228,15 @@ export default {
 }
 
 .studies {
-  min-height: 20rem;
+  min-height: 22rem;
 }
 
 .study-title {
   width: 90%;
 }
 
-.folded {
-  display: inline-block;
-  max-height: 300px;
-  max-width: 300px;
-  text-overflow: ellipsis;
-  overflow: hidden;
+.study-title:hover {
+  text-decoration: underline;
 }
 
 .info-text {
@@ -226,7 +244,7 @@ export default {
   font-style: italic;
 }
 
-.study-details {
+.to-catalogue {
   width: 1.2rem;
   height: 1.2rem;
 }
