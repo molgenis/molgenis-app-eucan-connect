@@ -1,6 +1,6 @@
 {
   "name": "molgenis-app-eucan-connect",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "This is the user interface for Eucan Connect. Here you can find studies/cohorts within multiple catalogues",
   "main": "main.js",
   "scripts": {
