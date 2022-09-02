@@ -2,28 +2,33 @@
   <div>
     <router-link class="d-inline-block ml-4 mt-3" to="/">Back</router-link>
     <div class="card mx-auto w-75 mt-4">
-      <div
-        class="card-header text-white bg-primary p-2"
-        v-if="Object.keys(study)">
+      <div class="card-header text-white bg-primary p-2">
         <h1>{{ study.study_name }}</h1>
-        <h2 class="subtitle">Acronym: {{ study.acronym }}</h2>
+        <h2 class="subtitle">Acronym: {{ study.acronym || "-" }}</h2>
       </div>
       <div class="card-body">
-        <h3 v-if="study.objectives">Objectives</h3>
+        <h3>Objectives</h3>
         <p class="card-text w-50 text-justify">
-          {{ study.objectives }}
+          {{ study.objectives || "-" }}
         </p>
         <study-property-table :studies="[study]" />
-        <div v-if="populations.length">
+        <div>
           <h3 class="mt-3">Populations</h3>
           <populations-table :populations="populations" />
         </div>
         <div v-if="study.source_data && study.source_data.length">
-          <a :href="createHref(study.source_data)" class="btn btn-info" target="_blank">Go to source catalogue</a>
+          <a
+            :href="createHref(study.source_data)"
+            class="btn btn-info"
+            target="_blank">Go to source catalogue</a>
         </div>
         <div v-if="similarStudies.length">
           <h3 class="mt-3">Possible related studies</h3>
           <study-property-table :studies="similarStudies" />
+        </div>
+        <div v-else>
+          <h3 class="mt-3">Possible related studies</h3>
+          <span>No related studies found.</span>
         </div>
       </div>
     </div>
@@ -53,7 +58,7 @@ export default {
       return this.studyData ? this.studyData.data : {}
     },
     populations () {
-      if (!this.study || !this.study.populations) return {}
+      if (!this.study || !this.study.populations) return []
       return this.study.populations.items.map((i) => i.data)
     },
     similarStudies () {

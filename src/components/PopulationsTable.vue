@@ -8,19 +8,14 @@
         <tr
           v-for="item of populationProperties"
           :key="`${population.id}${population[item.prop]}`">
-          <template
-            v-if="
-              population &&
-              population[item.prop] &&
-              population[item.prop].length
-            ">
+          <template>
             <th role="label" class="mr-3 property-header">
               {{ item.label }}
             </th>
             <td class="pl-5">
               <span v-if="item.type === 'array'">
-                {{ population[item.prop].map((m) => m.label).join(", ") }}</span>
-              <span v-else>{{ population[item.prop] }}</span>
+                {{ population[item.prop].map((m) => m.label).join(", ") || "-" }}</span>
+              <span v-else>{{ population[item.prop] || "-" }}</span>
             </td>
           </template>
         </tr>
