@@ -19,7 +19,7 @@
         <div v-if="study.source_data && study.source_data.length">
           <a
             :href="createHref(study.source_data)"
-            class="btn btn-info"
+            class="btn btn-secondary"
             target="_blank">Go to source catalogue</a>
         </div>
         <div v-if="similarStudies.length">
