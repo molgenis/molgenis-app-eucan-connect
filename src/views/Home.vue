@@ -6,7 +6,7 @@
           <div class="card-header">Search</div>
           <div class="card-body filter">
             <b-input v-model="searchSelectionModel" @keyup="filter" />
-            <b-button class="w-100 mt-2" variant="primary" @click="filter">Search</b-button>
+            <b-button class="w-100 mt-2" variant="secondary" @click="filter">Search</b-button>
             <span class="info-text">Search on title or acronym.</span>
           </div>
         </div>
