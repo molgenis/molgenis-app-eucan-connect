@@ -25,7 +25,7 @@ const htmlTemplate = () => {
   if (process.env.NODE_ENV === 'test') return 'public/preview.html'
 }
 
-const PROXY_TARGET = 'https://catalogue.eucanconnect.eu' // 'https://master.dev.molgenis.org'
+const PROXY_TARGET = 'https://test-eucan-connect.molgeniscloud.org' // 'https://master.dev.molgenis.org'
 
 module.exports = {
   runtimeCompiler: true,

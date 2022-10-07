@@ -81,7 +81,7 @@ export default new Vuex.Store({
 
       const query = rsqlService.combineQuerys(rawQuerys)
 
-      let url = `/api/data/eucan_study?size=15&page=${page}&expand=source_catalogue&sort=study_name`
+      let url = `/api/data/eucan_study?size=15&page=${page}&expand=source_catalogue,linked_studies&sort=study_name`
 
       if (query) url += query
 
@@ -89,7 +89,7 @@ export default new Vuex.Store({
       commit('setStudies', response)
     },
     async getStudy (_, id) {
-      const url = `/api/data/eucan_study/${id}?expand=populations`
+      const url = `/api/data/eucan_study/${id}?expand=populations,linked_studies`
       const response = await api.get(url)
       if (response.data.populations.items.length) {
         for (const item of response.data.populations.items) {
