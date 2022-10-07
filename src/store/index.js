@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import api from '@molgenis/molgenis-api-client'
 import rsqlService from '../logic/rsqlService'
 import { sortAsc, sortDesc, unique } from '../logic/predicates'
+import { createStudyViewmodel } from '../logic/viewmodels'
 
 Vue.use(Vuex)
 
@@ -20,8 +21,10 @@ export default new Vuex.Store({
   },
   mutations: {
     setStudies (state, data) {
-      state.studies = data.items.map(item => item.data) /* extract only the data part */
-      // Data for use in pagination.
+      /** mold into a viewmodel */
+      const viewmodels = createStudyViewmodel(data.items.map(item => item.data))
+      state.studies = viewmodels
+      /**  Data for use in pagination. */
       state.studiesPageInfo = data.page
     },
     setCatalogueSources (state, data) {
@@ -34,7 +37,7 @@ export default new Vuex.Store({
         .sort(sortDesc('value'))
     },
     setAvailableCountries (state, data) {
-      const distinctCountries = [] // to keep track of added countries
+      const distinctCountries = [] /** to keep track of added countries */
       const countryOptions = []
 
       for (const item of data.items) {
@@ -86,6 +89,15 @@ export default new Vuex.Store({
       if (query) url += query
 
       const response = await api.get(url)
+
+      /** get full linked studies */
+      for (const [index, studyResponse] of response.items.entries()) {
+        if (studyResponse.data.linked_studies) {
+          const linkedAcronym = studyResponse.data.linked_studies.data.acronym
+          const linkedStudies = await api.get(`/api/data/eucan_linkage?size=10000&expand=studies&q=acronym==${linkedAcronym}`)
+          response.items[index].data.linked_studies = linkedStudies.items.map(r => r.data.studies.items)[0] /** easy flatmap */
+        }
+      }
       commit('setStudies', response)
     },
     async getStudy (_, id) {
@@ -93,11 +105,12 @@ export default new Vuex.Store({
       const response = await api.get(url)
       if (response.data.populations.items.length) {
         for (const item of response.data.populations.items) {
-          // fetch one level deeper
+          /** fetch one level deeper */
           const critResponse = await api.get(item.data.selection_criteria.links.self)
           item.data.selection_criteria = critResponse.items.map(r => r.data)
         }
       }
+      // add this to already fetched viewmodelå
       return response
     },
     /* Based on the list of contacts, get all the associated countries */
