@@ -5,26 +5,22 @@
 export function createStudyViewmodel (studies) {
   const studyCardViewmodels = []
 
-  /** track the ids of studies we linked */
-  let studiesThatHaveBeenLinked = []
+  let idsAssigned = []
 
-  for (const study of studies) {
-    if (studiesThatHaveBeenLinked.includes(study.id)) continue
+  for (const rawStudy of studies) {
+    const study = Object.assign({}, rawStudy)
+    const linkedStudyIds = study.linked_studies
 
-    const linkedStudies = study.linked_studies
+    if (idsAssigned.includes(study.id)) continue
 
-    if (linkedStudies) {
-      if (Array.isArray(linkedStudies)) {
-        studiesThatHaveBeenLinked = studiesThatHaveBeenLinked.concat(linkedStudies.map(ls => ls.data.id))
-      } else {
-        studiesThatHaveBeenLinked.push(linkedStudies.data.id)
-      }
+    if (linkedStudyIds) {
+      study.linked_studies = studies.filter(study => linkedStudyIds.includes(study.id))
+
+      idsAssigned = idsAssigned.concat(linkedStudyIds)
     } else {
       study.linked_studies = []
     }
-
     studyCardViewmodels.push(study)
   }
-
   return studyCardViewmodels
 }

@@ -84,24 +84,53 @@ export default new Vuex.Store({
 
       const query = rsqlService.combineQuerys(rawQuerys)
 
-      let url = `/api/data/eucan_study?size=15&page=${page}&expand=source_catalogue,linked_studies&sort=study_name`
+      let url = `/api/data/eucan_study?size=15&page=${page}&expand=source_catalogue&sort=study_name`
 
       if (query) url += query
 
       const response = await api.get(url)
 
+      const linkedStudiesByAcronyms = {}
+      let allLinkedStudyIds = []
+      if (response.items && response.items.length) {
+        const acronymsForStudies = response.items.map(study => study.data.acronym.split(' ')[0]) /** needs to split because rsql can not handle a space or %20 */
+
+        const linkedStudiesResponse = await api.get(`/api/data/eucan_linkage?size=10000&expand=studies&q=acronym=in=(${acronymsForStudies.join()})`)
+        const linkedStudies = linkedStudiesResponse.items
+
+        for (const linkedStudy of linkedStudies) {
+          /** need ids because acronyms are not unique */
+          const linkedStudyIds = linkedStudy.data.studies.items.map(ls => ls.data.id)
+          const linkedStudyAcronyms = [...new Set([linkedStudy.data.acronym, ...linkedStudy.data.studies.items.map(linkedStudy => linkedStudy.data.acronym)])]
+
+          linkedStudyAcronyms.forEach(uniqueAcronym => {
+            linkedStudiesByAcronyms[uniqueAcronym] = linkedStudyIds
+            allLinkedStudyIds = allLinkedStudyIds.concat(linkedStudyIds)
+          })
+        }
+      }
+
+      const allStudyIds = response.items.map(item => item.data.id)
+      const missingLinkedStudies = allLinkedStudyIds.filter(alsi => !allStudyIds.includes(alsi))
+
+      if (missingLinkedStudies.length) {
+        const missinStudiesUrl = `/api/data/eucan_study?q=id=in=(${missingLinkedStudies.join()})&expand=source_catalogue`
+
+        const missingStudiesResponse = await api.get(missinStudiesUrl)
+        response.items = response.items.concat(missingStudiesResponse.items)
+      }
+
       /** get full linked studies */
       for (const [index, studyResponse] of response.items.entries()) {
-        if (studyResponse.data.linked_studies) {
-          const linkedAcronym = studyResponse.data.linked_studies.data.acronym
-          const linkedStudies = await api.get(`/api/data/eucan_linkage?size=10000&expand=studies&q=acronym==${linkedAcronym}`)
-          response.items[index].data.linked_studies = linkedStudies.items.map(r => r.data.studies.items)[0] /** easy flatmap */
+        const linkedStudiesForStudy = linkedStudiesByAcronyms[studyResponse.data.acronym]
+        if (linkedStudiesForStudy) {
+          response.items[index].data.linked_studies = linkedStudiesForStudy
         }
       }
       commit('setStudies', response)
     },
     async getStudy (_, id) {
-      const url = `/api/data/eucan_study/${id}?expand=populations,linked_studies`
+      const url = `/api/data/eucan_study/${id}?expand=populations`
       const response = await api.get(url)
       if (response.data.populations.items.length) {
         for (const item of response.data.populations.items) {
