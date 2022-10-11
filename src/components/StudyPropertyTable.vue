@@ -42,6 +42,10 @@ export default {
           prop: 'id'
         },
         {
+          label: 'Name:',
+          prop: 'study_name'
+        },
+        {
           label: 'Acronym:',
           prop: 'acronym'
         },
