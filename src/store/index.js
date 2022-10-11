@@ -7,6 +7,48 @@ import { createStudyViewmodel } from '../logic/viewmodels'
 
 Vue.use(Vuex)
 
+async function AddLinkedStudies (response) {
+  const linkedStudiesByAcronyms = {}
+  let allLinkedStudyIds = []
+
+  const acronymsForStudies = response.items.map(study => study.data.acronym.split(' ')[0]) /** needs to split because rsql can not handle a space or %20 */
+
+  const linkedStudiesResponse = await api.get(`/api/data/eucan_linkage?size=10000&expand=studies&q=acronym=in=(${acronymsForStudies.join()})`)
+  const linkedStudies = linkedStudiesResponse.items
+
+  for (const linkedStudy of linkedStudies) {
+    /** need ids because acronyms are not unique */
+    const linkedStudyIds = linkedStudy.data.studies.items.map(ls => ls.data.id)
+    const linkedStudyAcronyms = [...new Set([linkedStudy.data.acronym, ...linkedStudy.data.studies.items.map(linkedStudy => linkedStudy.data.acronym)])]
+
+    linkedStudyAcronyms.forEach(uniqueAcronym => {
+      linkedStudiesByAcronyms[uniqueAcronym] = linkedStudyIds
+      allLinkedStudyIds = allLinkedStudyIds.concat(linkedStudyIds)
+    })
+  }
+
+  const allStudyIds = response.items.map(item => item.data.id)
+  const missingLinkedStudies = allLinkedStudyIds.filter(alsi => !allStudyIds.includes(alsi))
+
+  if (missingLinkedStudies.length) {
+    const missingStudiesUrl = `/api/data/eucan_study?q=id=in=(${missingLinkedStudies.join()})&expand=source_catalogue`
+
+    const missingStudiesResponse = await api.get(missingStudiesUrl)
+    response.items = response.items.concat(missingStudiesResponse.items)
+    response.page.totalElements += missingStudiesResponse.page.totalElements
+  }
+
+  /** get full linked studies */
+  for (const [index, studyResponse] of response.items.entries()) {
+    const linkedStudiesForStudy = linkedStudiesByAcronyms[studyResponse.data.acronym]
+    if (linkedStudiesForStudy) {
+      response.items[index].data.linked_studies = linkedStudiesForStudy
+    }
+  }
+
+  return response
+}
+
 export default new Vuex.Store({
   state: {
     studies: [],
@@ -64,17 +106,6 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async getSimilarStudies (_, acronym) {
-      const searchText = acronym.split(' ')
-      const query = await rsqlService.acronymSearch(searchText[0])
-      if (!query) return []
-
-      const url = `/api/data/eucan_study?size=10000&q=${query}`
-
-      const response = await api.get(url)
-
-      return response.items.filter(f => f.data.acronym !== acronym)
-    },
     async getStudies ({ state, commit }, page = 0) {
       const rawQuerys = [
         await rsqlService.contactIdQuery(state.selectedCountries),
@@ -88,46 +119,12 @@ export default new Vuex.Store({
 
       if (query) url += query
 
-      const response = await api.get(url)
+      let response = await api.get(url)
 
-      const linkedStudiesByAcronyms = {}
-      let allLinkedStudyIds = []
       if (response.items && response.items.length) {
-        const acronymsForStudies = response.items.map(study => study.data.acronym.split(' ')[0]) /** needs to split because rsql can not handle a space or %20 */
-
-        const linkedStudiesResponse = await api.get(`/api/data/eucan_linkage?size=10000&expand=studies&q=acronym=in=(${acronymsForStudies.join()})`)
-        const linkedStudies = linkedStudiesResponse.items
-
-        for (const linkedStudy of linkedStudies) {
-          /** need ids because acronyms are not unique */
-          const linkedStudyIds = linkedStudy.data.studies.items.map(ls => ls.data.id)
-          const linkedStudyAcronyms = [...new Set([linkedStudy.data.acronym, ...linkedStudy.data.studies.items.map(linkedStudy => linkedStudy.data.acronym)])]
-
-          linkedStudyAcronyms.forEach(uniqueAcronym => {
-            linkedStudiesByAcronyms[uniqueAcronym] = linkedStudyIds
-            allLinkedStudyIds = allLinkedStudyIds.concat(linkedStudyIds)
-          })
-        }
+        response = await AddLinkedStudies(response)
       }
 
-      const allStudyIds = response.items.map(item => item.data.id)
-      const missingLinkedStudies = allLinkedStudyIds.filter(alsi => !allStudyIds.includes(alsi))
-
-      if (missingLinkedStudies.length) {
-        const missinStudiesUrl = `/api/data/eucan_study?q=id=in=(${missingLinkedStudies.join()})&expand=source_catalogue`
-
-        const missingStudiesResponse = await api.get(missinStudiesUrl)
-        response.items = response.items.concat(missingStudiesResponse.items)
-        response.page.totalElements += missingStudiesResponse.page.totalElements
-      }
-
-      /** get full linked studies */
-      for (const [index, studyResponse] of response.items.entries()) {
-        const linkedStudiesForStudy = linkedStudiesByAcronyms[studyResponse.data.acronym]
-        if (linkedStudiesForStudy) {
-          response.items[index].data.linked_studies = linkedStudiesForStudy
-        }
-      }
       commit('setStudies', response)
     },
     async getStudy (_, id) {
@@ -140,7 +137,15 @@ export default new Vuex.Store({
           item.data.selection_criteria = critResponse.items.map(r => r.data)
         }
       }
-      // add this to already fetched viewmodelå
+
+      const linkedStudiesResponse = await api.get(`/api/data/eucan_linkage?filter=studies&size=1000&expand=studies&q=acronym=in=(${response.data.acronym.split(' ')[0]})`)
+      const linkedStudyIds = linkedStudiesResponse.items[0].data.studies.items.map(study => study.data.id)
+
+      const completeLinkedStudies = await api.get(`/api/data/eucan_study?q=id=in=(${linkedStudyIds.join()})&expand=source_catalogue`)
+
+      response.data.linked_studies = completeLinkedStudies.items.filter(cls => cls.data.id !== response.data.id)
+      response.data.source_catalogue = completeLinkedStudies.items.filter(cls => cls.data.id === response.data.id)[0].data.source_catalogue
+
       return response
     },
     /* Based on the list of contacts, get all the associated countries */

@@ -16,18 +16,12 @@
           <h3 class="mt-3">Populations</h3>
           <populations-table :populations="populations" />
         </div>
-        <div v-if="study.source_data && study.source_data.length">
-          <a
-            :href="createHref(study.source_data)"
-            class="btn btn-primary"
-            target="_blank">Go to source catalogue</a>
-        </div>
         <div v-if="similarStudies.length">
-          <h3 class="mt-3">Possible related studies</h3>
+          <h3 class="mt-3">Related studies</h3>
           <study-property-table :studies="similarStudies" />
         </div>
         <div v-else>
-          <h3 class="mt-3">Possible related studies</h3>
+          <h3 class="mt-3">Related studies</h3>
           <span>No related studies found.</span>
         </div>
       </div>
@@ -48,11 +42,6 @@ export default {
       default: () => ''
     }
   },
-  watch: {
-    async study (newValue) {
-      this.similars = await this.getSimilarStudies(newValue.acronym)
-    }
-  },
   computed: {
     study () {
       return this.studyData ? this.studyData.data : {}
@@ -62,14 +51,15 @@ export default {
       return this.study.populations.items.map((i) => i.data)
     },
     similarStudies () {
-      if (!this.similars.length) return []
-      return this.similars.map((i) => i.data)
+      if (!this.studyData) return []
+      else {
+        return this.studyData.data.linked_studies.map(ls => ls.data)
+      }
     }
   },
   data () {
     return {
-      studyData: undefined,
-      similars: []
+      studyData: undefined
     }
   },
   methods: {
