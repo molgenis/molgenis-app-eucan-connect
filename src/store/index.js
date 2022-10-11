@@ -118,6 +118,7 @@ export default new Vuex.Store({
 
         const missingStudiesResponse = await api.get(missinStudiesUrl)
         response.items = response.items.concat(missingStudiesResponse.items)
+        response.page.totalElements += missingStudiesResponse.page.totalElements
       }
 
       /** get full linked studies */
