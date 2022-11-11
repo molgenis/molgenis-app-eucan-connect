@@ -11,11 +11,27 @@
               {{ item.label }}
             </th>
             <td class="pl-5">
-              <a v-if="item.type === 'url' && study[item.prop]" :href="createHref(study[item.prop])" target="_blank">
-                {{ study[item.prop] || '-' }}</a>
-              <a v-else-if="item.type === 'nested_url' && getNestedData(study[item.prop],item.urlProp)" :href="createHref(getNestedData(study[item.prop],item.urlProp))" target="_blank">
-                {{ getNestedData(study[item.prop], item.labelProp || item.urlProp) }}</a>
-              <span v-else>{{ study[item.prop] || '-' }}</span>
+              <a
+                v-if="item.type === 'url' && study[item.prop]"
+                :href="createHref(study[item.prop])"
+                target="_blank">
+                {{ study[item.prop] || "-" }}</a>
+              <a
+                v-else-if="
+                  item.type === 'nested_url' &&
+                  getNestedData(study[item.prop], item.urlProp)
+                "
+                :href="
+                  createHref(getNestedData(study[item.prop], item.urlProp))
+                "
+                target="_blank">
+                {{
+                  getNestedData(
+                    study[item.prop],
+                    item.labelProp || item.urlProp
+                  )
+                }}</a>
+              <span v-else>{{ returnValidValue(study[item.prop]) }}</span>
             </td>
           </template>
         </tr>
@@ -88,6 +104,12 @@ export default {
       } else {
         return item.nestedProp
       }
+    },
+    returnValidValue (value) {
+      /** to make sure we do not render json */
+      if (!value || typeof value === 'object') {
+        return '-'
+      } else return value
     }
   }
 }

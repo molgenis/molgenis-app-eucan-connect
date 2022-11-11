@@ -139,13 +139,14 @@ export default new Vuex.Store({
       }
 
       const linkedStudiesResponse = await api.get(`/api/data/eucan_linkage?filter=studies&size=1000&expand=studies&q=acronym=in=(${response.data.acronym.split(' ')[0]})`)
-      const linkedStudyIds = linkedStudiesResponse.items[0].data.studies.items.map(study => study.data.id)
+      if (linkedStudiesResponse.items && linkedStudiesResponse.items.length) {
+        const linkedStudyIds = linkedStudiesResponse.items[0].data.studies.items.map(study => study.data.id)
 
-      const completeLinkedStudies = await api.get(`/api/data/eucan_study?q=id=in=(${linkedStudyIds.join()})&expand=source_catalogue`)
+        const completeLinkedStudies = await api.get(`/api/data/eucan_study?q=id=in=(${linkedStudyIds.join()})&expand=source_catalogue`)
 
-      response.data.linked_studies = completeLinkedStudies.items.filter(cls => cls.data.id !== response.data.id)
-      response.data.source_catalogue = completeLinkedStudies.items.filter(cls => cls.data.id === response.data.id)[0].data.source_catalogue
-
+        response.data.linked_studies = completeLinkedStudies.items.filter(cls => cls.data.id !== response.data.id)
+        response.data.source_catalogue = completeLinkedStudies.items.filter(cls => cls.data.id === response.data.id)[0].data.source_catalogue
+      }
       return response
     },
     /* Based on the list of contacts, get all the associated countries */
