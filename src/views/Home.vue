@@ -83,9 +83,32 @@
                   class="float-right mt-1">read less</b-link>
               </p>
             </div>
-            <div class="badge badge-primary catalogue-badge p-1">
+            <div v-if="study.linked_studies.length">
+              <div
+                v-for="linked_study in study.linked_studies"
+                :key="linked_study.id"
+                class="badge badge-primary catalogue-badge w-100 py-2 mt-2">
+                <a
+                  :href="getStudyLink(linked_study)"
+                  target="_blank"
+                  class="
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                    text-white
+                  ">
+                  <span class="to-catalogue"></span>
+                  <span>Go to {{ linked_study.source_catalogue.data.description }}</span>
+                  <font-awesome-icon
+                    :title="`Go to ${linked_study.source_catalogue.data.description}`"
+                    class="to-catalogue"
+                    :icon="['far', 'arrow-alt-circle-right']"/>
+                </a>
+              </div>
+            </div>
+            <div v-else class="badge badge-primary catalogue-badge p-1">
               <a
-                :href="createHref(study.source_catalogue.data.catalogue_url)"
+                :href="getStudyLink(study)"
                 target="_blank"
                 class="
                   d-flex
@@ -209,6 +232,12 @@ export default {
       } else {
         return url
       }
+    },
+    getStudyLink (study) {
+      return this.createHref(study.source_data || study.source_catalogue.data.catalogue_url)
+    },
+    getStudyLinkDescription (study) {
+
     }
   }
 }
@@ -217,8 +246,20 @@ export default {
 <style scoped>
 .catalogue-badge {
   font-size: 80%;
+}
+
+.catalogue-badge:first-child {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.catalogue-badge:last-child {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.catalogue-badge:not(:first-child):not(:last-child) {
+  border-radius: 0;
 }
 
 .card {
