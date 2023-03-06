@@ -66,7 +66,7 @@ export default new Vuex.Store({
       const query = await rsqlService.acronymSearch(searchText[0])
       if (!query) return []
 
-      const url = `/api/data/eucan_study?size=10000&q=${query}`
+      const url = `/api/data/eucan_studies?size=10000&q=${query}`
 
       const response = await api.get(url)
 
@@ -81,7 +81,7 @@ export default new Vuex.Store({
 
       const query = rsqlService.combineQuerys(rawQuerys)
 
-      let url = `/api/data/eucan_study?size=15&page=${page}&expand=source_catalogue&sort=study_name`
+      let url = `/api/data/eucan_studies?size=15&page=${page}&expand=source_catalogue&sort=study_name`
 
       if (query) url += query
 
@@ -89,7 +89,7 @@ export default new Vuex.Store({
       commit('setStudies', response)
     },
     async getStudy (_, id) {
-      const url = `/api/data/eucan_study/${id}?expand=populations`
+      const url = `/api/data/eucan_studies/${id}?expand=populations`
       const response = await api.get(url)
       if (response.data.populations.items.length) {
         for (const item of response.data.populations.items) {
@@ -110,7 +110,7 @@ export default new Vuex.Store({
       commit('setCatalogueSources', response)
     },
     async getAvailableStartYears ({ commit }) {
-      const response = await api.get('/api/data/eucan_study?filter=start_year&size=10000')
+      const response = await api.get('/api/data/eucan_studies?filter=start_year&size=10000')
       commit('setStartYears', response)
     }
   }
