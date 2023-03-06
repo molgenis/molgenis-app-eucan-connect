@@ -38,11 +38,15 @@ export default new Vuex.Store({
       const countryOptions = []
 
       for (const item of data.items) {
-        const country = item.data ? item.data.country : undefined
+        const countries = item.data ? item.data.countries.items : undefined
 
-        if (country && !distinctCountries.includes(country.data.country_name)) {
-          countryOptions.push({ text: country.data.country_name, value: country.data.iso2_code })
-          distinctCountries.push(country.data.country_name)
+        if (countries) {
+          for (const country of countries) {
+            if (!distinctCountries.includes(country.data.country_name)) {
+              countryOptions.push({ text: country.data.country_name, value: country.data.iso2_code })
+              distinctCountries.push(country.data.country_name)
+            }
+          }
         }
       }
       state.countries = countryOptions.sort(sortAsc('text'))
@@ -74,7 +78,7 @@ export default new Vuex.Store({
     },
     async getStudies ({ state, commit }, page = 0) {
       const rawQuerys = [
-        await rsqlService.contactIdQuery(state.selectedCountries),
+        await rsqlService.countryQuery(state.selectedCountries),
         await rsqlService.textSearchQuery(state.search),
         await rsqlService.sourceQuery(state.selectedSources),
         await rsqlService.startYearQuery(state.selectedStartYears)]
@@ -100,9 +104,9 @@ export default new Vuex.Store({
       }
       return response
     },
-    /* Based on the list of contacts, get all the associated countries */
+    /* Fetch all the associated countries */
     async getAvailableCountries ({ commit }) {
-      const response = await api.get('/api/data/eucan_persons?filter=country&expand=country')
+      const response = await api.get('/api/data/eucan_studies?expand=countries')
       commit('setAvailableCountries', response)
     },
     async getAvailableSourceCatalogues ({ commit }) {

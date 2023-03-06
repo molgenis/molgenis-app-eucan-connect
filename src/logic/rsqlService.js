@@ -1,4 +1,3 @@
-import api from '@molgenis/molgenis-api-client'
 import { transformToRSQL } from '@molgenis/rsql'
 
 function splitText (text) {
@@ -20,23 +19,12 @@ function queryBuilder (attribute, filters, comparison) {
   }
 }
 export default {
-  async contactIdQuery (countryCodes) {
+  async countryQuery (countryCodes) {
     if (!countryCodes || !countryCodes.length) return ''
-
-    const contactRsql = transformToRSQL({
-      operator: 'OR',
-      operands: queryBuilder('country.iso2_code', countryCodes, '=in=')
-    })
-
-    // get id's of contacts of country.
-    const contactResponse = await api.get(`/api/data/eucan_persons?q=${contactRsql}`)
-
-    // Get unique id's
-    const contactIds = [...new Set(contactResponse.items.map(item => item.data.id))]
 
     return transformToRSQL({
       operator: 'OR',
-      operands: queryBuilder('contacts.id', contactIds, '=in=')
+      operands: queryBuilder('countries.iso2_code', countryCodes, '=in=')
     })
   },
   async textSearchQuery (text) {
