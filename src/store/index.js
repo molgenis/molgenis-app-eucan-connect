@@ -31,7 +31,7 @@ async function AddLinkedStudies (response) {
   const missingLinkedStudies = allLinkedStudyIds.filter(alsi => !allStudyIds.includes(alsi))
 
   if (missingLinkedStudies.length) {
-    const missingStudiesUrl = `/api/data/eucan_study?q=id=in=(${missingLinkedStudies.join()})&expand=source_catalogue`
+    const missingStudiesUrl = `/api/data/eucan_studies?q=id=in=(${missingLinkedStudies.join()})&expand=source_catalogue`
 
     const missingStudiesResponse = await api.get(missingStudiesUrl)
     response.items = response.items.concat(missingStudiesResponse.items)
@@ -157,7 +157,7 @@ export default new Vuex.Store({
       if (linkedStudiesResponse.items && linkedStudiesResponse.items.length) {
         const linkedStudyIds = linkedStudiesResponse.items[0].data.studies.items.map(study => study.data.id)
 
-        const completeLinkedStudies = await api.get(`/api/data/eucan_study?q=id=in=(${linkedStudyIds.join()})&expand=source_catalogue`)
+        const completeLinkedStudies = await api.get(`/api/data/eucan_studies?q=id=in=(${linkedStudyIds.join()})&expand=source_catalogue`)
 
         response.data.linked_studies = completeLinkedStudies.items.filter(cls => cls.data.id !== response.data.id)
         response.data.source_catalogue = completeLinkedStudies.items.filter(cls => cls.data.id === response.data.id)[0].data.source_catalogue

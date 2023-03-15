@@ -53,43 +53,55 @@ export default {
   studyCountryResponse: {
     items: [{
       data: {
-        country: {
-          data: {
-            country_name: 'The Netherlands',
-            iso2_code: 'NL'
-          }
+        countries: {
+          items: [{
+            data: {
+              country_name: 'The Netherlands',
+              iso2_code: 'NL'
+            }
+          }]
         }
       }
     },
     {
       data: {
-        country: {
-          data: {
-            country_name: 'The Netherlands',
-            iso2_code: 'NL'
-          }
+        countries: {
+          items: [
+            {
+              data: {
+                country_name: 'The Netherlands',
+                iso2_code: 'NL'
+              }
+            }]
         }
       }
     },
     {
       data: {
-        country: {
-          data: {
-            country_name: 'England',
-            iso2_code: 'UK'
-          }
+        countries: {
+          items: [
+            {
+              data: {
+                country_name: 'England',
+                iso2_code: 'UK'
+              }
+            }]
         }
       }
     },
     {
       data: {
-        country: {
-          data: {
-            country_name: 'Germany',
-            iso2_code: 'DE'
-          }
+        countries: {
+          items: [
+            {
+              data: {
+                country_name: 'Germany',
+                iso2_code: 'DE'
+              }
+            }]
         }
       }
-    }]
+    }
+    ]
   }
 }

@@ -1,14 +1,10 @@
 
 import rsqlService from '../../../src/logic/rsqlService'
 
-jest.mock('@molgenis/molgenis-api-client', () => ({
-  get: () => new Promise((resolve) => resolve({ items: [{ data: { id: 'mock_contact_id' } }] }))
-}))
-
 describe('rsqlService', () => {
   it('can create a contact id query based on country codes', async () => {
-    const query = await rsqlService.contactIdQuery(['NL'])
-    expect(query).toBe('contacts.id=in=(mock_contact_id)')
+    const query = await rsqlService.countryQuery(['NL'])
+    expect(query).toBe('countries.iso2_code=in=(NL)')
   })
 
   it('can create a search query for title and acronym based on text input', async () => {

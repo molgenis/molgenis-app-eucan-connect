@@ -12,7 +12,7 @@ jest.mock('@molgenis/molgenis-api-client', () => ({
             }]
           })
         })
-      case '/api/data/eucan_study/test_id?expand=populations': {
+      case '/api/data/eucan_studies/test_id?expand=populations': {
         return new Promise((resolve) =>
           resolve(
             {
@@ -60,7 +60,7 @@ jest.mock('@molgenis/molgenis-api-client', () => ({
           ))
       }
 
-      case '/api/data/eucan_study?q=id=in=(test_Study_1)&expand=source_catalogue': {
+      case '/api/data/eucan_studies?q=id=in=(test_Study_1)&expand=source_catalogue': {
         return new Promise((resolve) =>
           resolve(
             {
