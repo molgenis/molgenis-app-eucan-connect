@@ -7,10 +7,10 @@
       <tbody>
         <tr v-for="item of properties" :key="item.prop">
           <template>
-            <th role="label" class="mr-3 property-header">
+            <th role="label" class="text-nowrap align-top pr-4 property-header">
               {{ item.label }}
             </th>
-            <td class="pl-5">
+            <td>
               <a
                 v-if="item.type === 'url' && study[item.prop]"
                 :href="createHref(study[item.prop])"
@@ -47,6 +47,11 @@ export default {
     studies: {
       type: Array,
       required: true,
+      default: () => []
+    },
+    hideProperties: {
+      type: Array,
+      required: false,
       default: () => []
     }
   },
@@ -86,7 +91,7 @@ export default {
           urlProp: 'catalogue_url',
           type: 'nested_url'
         }
-      ]
+      ].filter(item => !this.hideProperties.includes(item.prop))
     }
   },
   methods: {

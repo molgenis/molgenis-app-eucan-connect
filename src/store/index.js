@@ -11,7 +11,7 @@ async function AddLinkedStudies (response) {
   const linkedStudiesByAcronyms = {}
   let allLinkedStudyIds = []
 
-  const acronymsForStudies = response.items.map(study => study.data.acronym.split(' ')[0]) /** needs to split because rsql can not handle a space or %20 */
+  const acronymsForStudies = response.items.map(study => study.data.acronym ? study.data.acronym.split(' ')[0] : '').filter(acronym => acronym !== '') /** needs to split because rsql can not handle a space or %20 */
 
   const linkedStudiesResponse = await api.get(`/api/data/eucan_linkage?size=10000&expand=studies&q=acronym=in=(${acronymsForStudies.join()})`)
   const linkedStudies = linkedStudiesResponse.items
@@ -143,7 +143,7 @@ export default new Vuex.Store({
       commit('setStudies', response)
     },
     async getStudy (_, id) {
-      const url = `/api/data/eucan_studies/${id}?expand=populations`
+      const url = `/api/data/eucan_studies/${id}?expand=populations,countries`
       const response = await api.get(url)
       if (response.data.populations.items.length) {
         for (const item of response.data.populations.items) {
@@ -157,7 +157,7 @@ export default new Vuex.Store({
       if (linkedStudiesResponse.items && linkedStudiesResponse.items.length) {
         const linkedStudyIds = linkedStudiesResponse.items[0].data.studies.items.map(study => study.data.id)
 
-        const completeLinkedStudies = await api.get(`/api/data/eucan_studies?q=id=in=(${linkedStudyIds.join()})&expand=source_catalogue`)
+        const completeLinkedStudies = await api.get(`/api/data/eucan_studies?q=id=in=(${linkedStudyIds.join()})&expand=source_catalogue,countries`)
 
         response.data.linked_studies = completeLinkedStudies.items.filter(cls => cls.data.id !== response.data.id)
         response.data.source_catalogue = completeLinkedStudies.items.filter(cls => cls.data.id === response.data.id)[0].data.source_catalogue

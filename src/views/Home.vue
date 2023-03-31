@@ -67,21 +67,15 @@
                 </span>
               </router-link>
             </div>
-            <div class="card-body">
-              <p v-if="!expand.includes(study.id)" class="card-text">
-                {{ studyDescription(study.objectives) }}
-                <b-link
-                  v-if="descriptionTooLong(study.objectives)"
-                  @click="toggleDescription(study.id)"
-                  class="float-right mt-1">read more</b-link>
-              </p>
-              <p v-else class="card-text">
-                {{ study.objectives }}
-                <b-link
-                  v-if="descriptionTooLong(study.objectives)"
-                  @click="toggleDescription(study.id)"
-                  class="float-right mt-1">read less</b-link>
-              </p>
+            <div class="card-body p-2">
+              <study-property-table
+                :studies="[study]"
+                :hideProperties="[
+                  'id',
+                  'study_name',
+                  'website',
+                  'source_catalogue',
+                ]"/>
             </div>
             <div v-if="study.linked_studies.length">
               <div
@@ -91,14 +85,10 @@
                 <a
                   :href="getStudyLink(linked_study)"
                   target="_blank"
-                  class="
-                    d-flex
-                    justify-content-between
-                    align-items-center
-                    text-white
-                  ">
+                  class="d-flex justify-content-between align-items-center text-white">
                   <span class="to-catalogue"></span>
-                  <span>Go to {{ linked_study.source_catalogue.data.description }}</span>
+                  <span>Go to
+                    {{ linked_study.source_catalogue.data.description }}</span>
                   <font-awesome-icon
                     :title="`Go to ${linked_study.source_catalogue.data.description}`"
                     class="to-catalogue"
@@ -110,12 +100,7 @@
               <a
                 :href="getStudyLink(study)"
                 target="_blank"
-                class="
-                  d-flex
-                  justify-content-between
-                  align-items-center
-                  text-white
-                ">
+                class="d-flex justify-content-between align-items-center text-white">
                 <span class="to-catalogue"></span>
                 <span>Go to {{ study.source_catalogue.data.description }}</span>
                 <font-awesome-icon
@@ -141,8 +126,13 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
+import StudyPropertyTable from '../components/StudyPropertyTable.vue'
+
 export default {
   name: 'Home',
+  components: {
+    StudyPropertyTable
+  },
   data: function () {
     return {
       expand: [],
@@ -203,22 +193,6 @@ export default {
       'setSelectedSources',
       'setSelectedStartYears'
     ]),
-    studyDescription (description) {
-      if (this.descriptionTooLong(description)) {
-        return description.substr(0, 200).trim() + '...'
-      }
-      return description || 'No description available'
-    },
-    descriptionTooLong (description) {
-      return description && description.length > 200
-    },
-    toggleDescription (id) {
-      if (this.expand.includes(id)) {
-        this.expand.splice(this.expand.indexOf(id), 1)
-      } else {
-        this.expand.push(id)
-      }
-    },
     filter () {
       this.getStudies(0)
       this.currentPage = 1
@@ -234,11 +208,11 @@ export default {
       }
     },
     getStudyLink (study) {
-      return this.createHref(study.source_data || study.source_catalogue.data.catalogue_url)
+      return this.createHref(
+        study.source_data || study.source_catalogue.data.catalogue_url
+      )
     },
-    getStudyLinkDescription (study) {
-
-    }
+    getStudyLinkDescription (study) {}
   }
 }
 </script>

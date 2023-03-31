@@ -8,21 +8,16 @@
       </div>
       <div class="card-body">
         <h3>Objectives</h3>
-        <p class="card-text w-50 text-justify">
+        <p class="card-text w-75 text-justify">
           {{ study.objectives || "-" }}
         </p>
         <study-property-table :studies="[study]" />
-        <!-- <div>
-          <h3 class="mt-3">Populations</h3>
-          <populations-table :populations="populations" />
-        </div> -->
         <div v-if="similarStudies.length">
-          <h3 class="mt-3">Similar studies in other catalogues</h3>
+          <h3 class="mt-3">Same study found in</h3>
           <study-property-table :studies="similarStudies" />
         </div>
         <div v-else>
-          <h3 class="mt-3">Similar studies in other catalogues</h3>
-          <span>No similar studies found.</span>
+          <i class="mt-3 d-block">This study was not found in other catalogues.</i>
         </div>
       </div>
     </div>
