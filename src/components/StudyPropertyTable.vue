@@ -7,7 +7,7 @@
       <tbody>
         <tr v-for="item of properties" :key="item.prop">
           <template>
-            <th role="label" class="text-nowrap align-top pr-4 property-header">
+            <th role="label" class="text-nowrap align-top pr-3 property-header">
               {{ item.label }}
             </th>
             <td>

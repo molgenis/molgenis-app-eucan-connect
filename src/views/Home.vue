@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid pt-2">
+  <div class="container-fluid pt-2 pr-0">
     <div class="row">
       <div class="col-2 pr-0">
         <div class="card w-100">
@@ -77,7 +77,7 @@
                   'source_catalogue',
                 ]"/>
             </div>
-            <div v-if="study.linked_studies.length">
+            <div v-if="study.linked_studies && study.linked_studies.length">
               <div
                 v-for="linked_study in study.linked_studies"
                 :key="linked_study.id"
@@ -208,6 +208,14 @@ export default {
       }
     },
     getStudyLink (study) {
+      if (
+        !study.source_data &&
+        !study.source_catalogue &&
+        !study.source_catalogue.data
+      ) {
+        return ''
+      }
+
       return this.createHref(
         study.source_data || study.source_catalogue.data.catalogue_url
       )

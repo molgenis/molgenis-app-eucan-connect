@@ -7,6 +7,23 @@ import { createStudyViewmodel } from '../logic/viewmodels'
 
 Vue.use(Vuex)
 
+/** so we can get two pages worth and then cut off the excess, else we will have short,
+ * because some studies are folded into one card if they are linked
+ */
+async function _queryStudies (page, query) {
+  let url = `/api/data/eucan_studies?size=15&page=${page}&expand=source_catalogue,countries&sort=study_name`
+
+  if (query) url += query
+
+  let response = await api.get(url)
+
+  if (response.items && response.items.length) {
+    response = await AddLinkedStudies(response)
+  }
+
+  return response
+}
+
 async function AddLinkedStudies (response) {
   const linkedStudiesByAcronyms = {}
   let allLinkedStudyIds = []
@@ -31,11 +48,10 @@ async function AddLinkedStudies (response) {
   const missingLinkedStudies = allLinkedStudyIds.filter(alsi => !allStudyIds.includes(alsi))
 
   if (missingLinkedStudies.length) {
-    const missingStudiesUrl = `/api/data/eucan_studies?q=id=in=(${missingLinkedStudies.join()})&expand=source_catalogue`
+    const missingStudiesUrl = `/api/data/eucan_studies?q=id=in=(${missingLinkedStudies.join()})&expand=source_catalogue,countries`
 
     const missingStudiesResponse = await api.get(missingStudiesUrl)
     response.items = response.items.concat(missingStudiesResponse.items)
-    response.page.totalElements += missingStudiesResponse.page.totalElements
   }
 
   /** get full linked studies */
@@ -63,9 +79,11 @@ export default new Vuex.Store({
   },
   mutations: {
     setStudies (state, data) {
+      const studyData = data.items.map(item => item.data)
       /** mold into a viewmodel */
-      const viewmodels = createStudyViewmodel(data.items.map(item => item.data))
+      const viewmodels = createStudyViewmodel(studyData)
       state.studies = viewmodels
+
       /**  Data for use in pagination. */
       state.studiesPageInfo = data.page
     },
@@ -130,17 +148,14 @@ export default new Vuex.Store({
 
       const query = rsqlService.combineQuerys(rawQuerys)
 
-      let url = `/api/data/eucan_studies?size=15&page=${page}&expand=source_catalogue,countries&sort=study_name`
+      const studies = await _queryStudies(page, query)
 
-      if (query) url += query
-
-      let response = await api.get(url)
-
-      if (response.items && response.items.length) {
-        response = await AddLinkedStudies(response)
+      if (state.studiesPageInfo.totalPages !== page && !query) {
+        const nextStudiesResponse = await _queryStudies(page + 1, query)
+        studies.items = studies.items.concat(nextStudiesResponse.items)
       }
 
-      commit('setStudies', response)
+      commit('setStudies', studies)
     },
     async getStudy (_, id) {
       const url = `/api/data/eucan_studies/${id}?expand=populations,countries`

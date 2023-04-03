@@ -22,5 +22,6 @@ export function createStudyViewmodel (studies) {
     }
     studyCardViewmodels.push(study)
   }
-  return studyCardViewmodels
+
+  return studyCardViewmodels.slice(0, 15)
 }
