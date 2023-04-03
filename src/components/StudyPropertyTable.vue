@@ -35,6 +35,14 @@
             </td>
           </template>
         </tr>
+        <tr v-if="study.countries && study.countries.items.length">
+          <th role="label" class="text-nowrap align-top pr-4 property-header">
+            {{ study.countries.items.length > 1 ? "Countries:" : "Country:" }}
+          </th>
+          <td>
+            {{ studyCountries(study) }}
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -91,7 +99,7 @@ export default {
           urlProp: 'catalogue_url',
           type: 'nested_url'
         }
-      ].filter(item => !this.hideProperties.includes(item.prop))
+      ].filter((item) => !this.hideProperties.includes(item.prop))
     }
   },
   methods: {
@@ -115,6 +123,13 @@ export default {
       if (!value || typeof value === 'object') {
         return '-'
       } else return value
+    },
+    studyCountries (study) {
+      return (
+        study.countries?.items
+          ?.map((country) => country.data.country_name)
+          .join(', ') || ''
+      )
     }
   }
 }

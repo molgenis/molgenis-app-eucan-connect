@@ -211,8 +211,7 @@ export default {
       return this.createHref(
         study.source_data || study.source_catalogue.data.catalogue_url
       )
-    },
-    getStudyLinkDescription (study) {}
+    }
   }
 }
 </script>

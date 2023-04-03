@@ -130,7 +130,7 @@ export default new Vuex.Store({
 
       const query = rsqlService.combineQuerys(rawQuerys)
 
-      let url = `/api/data/eucan_studies?size=15&page=${page}&expand=source_catalogue&sort=study_name`
+      let url = `/api/data/eucan_studies?size=15&page=${page}&expand=source_catalogue,countries&sort=study_name`
 
       if (query) url += query
 
