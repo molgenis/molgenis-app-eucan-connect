@@ -25,8 +25,7 @@ const store = new Vuex.Store({
           }
         })
       })
-    },
-    getSimilarStudies: () => new Promise((resolve) => resolve({}))
+    }
   }
 })
 

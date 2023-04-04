@@ -77,7 +77,8 @@
                   'source_catalogue',
                 ]"/>
             </div>
-            <div v-if="study.linked_studies && study.linked_studies.length">
+
+            <div v-if="study.linked_studies.length">
               <div
                 v-for="linked_study in study.linked_studies"
                 :key="linked_study.id"

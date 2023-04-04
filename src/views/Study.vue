@@ -13,7 +13,7 @@
         </p>
         <study-property-table :studies="[study]" />
         <div v-if="similarStudies.length">
-          <h3 class="mt-3">Same study found in</h3>
+          <h3 class="mt-3">This study is also found in other catalogues:</h3>
           <study-property-table :studies="similarStudies" />
         </div>
         <div v-else>
@@ -57,7 +57,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getStudy', 'getSimilarStudies']),
+    ...mapActions(['getStudy']),
     createHref (url) {
       if (url.substring(0, 4) !== 'http') {
         return `https://${url}`

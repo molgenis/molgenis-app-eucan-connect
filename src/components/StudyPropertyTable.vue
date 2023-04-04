@@ -14,6 +14,7 @@
               <a
                 v-if="item.type === 'url' && study[item.prop]"
                 :href="createHref(study[item.prop])"
+                class="text-break"
                 target="_blank">
                 {{ study[item.prop] || "-" }}</a>
               <a
@@ -24,6 +25,7 @@
                 :href="
                   createHref(getNestedData(study[item.prop], item.urlProp))
                 "
+                class="text-break"
                 target="_blank">
                 {{
                   getNestedData(
