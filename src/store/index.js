@@ -7,7 +7,7 @@ import { createStudyViewmodel } from '../logic/viewmodels'
 
 Vue.use(Vuex)
 
-/** so we can get two pages worth and then cut off the excess, else we will have short,
+/** so we can get two pages worth and then cut off the excess when building the viewmodel, else we will have short,
  * because some studies are folded into one card if they are linked
  */
 async function _queryStudies (page, query) {
