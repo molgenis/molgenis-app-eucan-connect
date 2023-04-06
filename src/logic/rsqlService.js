@@ -62,8 +62,8 @@ export default {
       operands: queryBuilder('source_catalogue.id', sources, '=in=')
     })
   },
-  async startYearQuery (start, end) {
-    if (!start || !end) return ''
+  async startYearQuery (active, start, end) {
+    if (!active || !start || !end) return ''
 
     return `start_year=ge=${start}&start_year=le=${end}`
   },

@@ -66,7 +66,8 @@ export default new Vuex.Store({
     selectedSources: [],
     startYears: [],
     fromStartYear: '',
-    toStartYear: ''
+    toStartYear: '',
+    yearRangeActive: false
   },
   mutations: {
     setStudies (state, data) {
@@ -76,6 +77,7 @@ export default new Vuex.Store({
       state.studies = viewmodels
 
       /**  Data for use in pagination. */
+      console.trace(data.page)
       state.studiesPageInfo = data.page
     },
     setCatalogueSources (state, data) {
@@ -118,9 +120,11 @@ export default new Vuex.Store({
       state.selectedSources = newSources
     },
     setFromStartYear (state, newYear) {
+      this.yearRangeActive = true
       state.fromStartYear = newYear
     },
     setToStartYear (state, newYear) {
+      this.yearRangeActive = true
       state.toStartYear = newYear
     }
   },
@@ -130,10 +134,10 @@ export default new Vuex.Store({
         await rsqlService.countryQuery(state.selectedCountries),
         await rsqlService.textSearchQuery(state.search),
         await rsqlService.sourceQuery(state.selectedSources),
-        await rsqlService.startYearQuery(state.fromStartYear, state.toStartYear)]
+        /** need to check if the user has activated the year range, else on pagination the unknown years are missing */
+        await rsqlService.startYearQuery(state.yearRangeActive, state.fromStartYear, state.toStartYear)]
 
       const query = rsqlService.combineQuerys(rawQuerys)
-
       const studies = await _queryStudies(page, query)
 
       if (state.studiesPageInfo.totalPages !== page && !query) {
