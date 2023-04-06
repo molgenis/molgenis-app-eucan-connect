@@ -77,7 +77,6 @@ export default new Vuex.Store({
       state.studies = viewmodels
 
       /**  Data for use in pagination. */
-      console.trace(data.page)
       state.studiesPageInfo = data.page
     },
     setCatalogueSources (state, data) {
@@ -120,12 +119,13 @@ export default new Vuex.Store({
       state.selectedSources = newSources
     },
     setFromStartYear (state, newYear) {
-      this.yearRangeActive = true
       state.fromStartYear = newYear
     },
     setToStartYear (state, newYear) {
-      this.yearRangeActive = true
       state.toStartYear = newYear
+    },
+    activateYearFilter (state) {
+      state.yearRangeActive = true
     }
   },
   actions: {

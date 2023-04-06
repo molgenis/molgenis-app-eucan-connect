@@ -29,14 +29,14 @@
               <b-form-select
                 v-model="fromStartYearSelectionModel"
                 :options="startYears"
-                @change="filter"></b-form-select>
+                @change="filter('year')"></b-form-select>
             </label>
             <label class="w-100">
               <span class="d-block py-2">To:</span>
               <b-form-select
                 v-model="toStartYearSelectionModel"
                 :options="startYears"
-                @change="filter"></b-form-select>
+                @change="filter('year')"></b-form-select>
             </label>
           </div>
         </div>
@@ -209,7 +209,8 @@ export default {
       'setSelectedCountries',
       'setSelectedSources',
       'setFromStartYear',
-      'setToStartYear'
+      'setToStartYear',
+      'activateYearFilter'
     ]),
     truncateTitle (title) {
       if (title.length > 80) {
@@ -218,7 +219,7 @@ export default {
 
       return title
     },
-    filter () {
+    filter (filter) {
       /** user is still busy selecting stuff and we have an invalid state */
       if (
         parseInt(this.toStartYearSelectionModel) <
@@ -226,6 +227,11 @@ export default {
       ) {
         return
       }
+
+      if (filter === 'year') {
+        this.activateYearFilter()
+      }
+
       this.getStudies(0)
       this.currentPage = 1
     },
