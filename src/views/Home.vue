@@ -213,8 +213,8 @@ export default {
       'activateYearFilter'
     ]),
     truncateTitle (title) {
-      if (title.length > 80) {
-        return title.substring(0, 80) + '...'
+      if (title.length > 70) {
+        return title.substring(0, 70) + '...'
       }
 
       return title
