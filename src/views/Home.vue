@@ -77,39 +77,35 @@
                   'source_data',
                   'source_catalogue',
                 ]"/>
-            </div>
-
-            <div v-if="study.linked_studies.length">
-              <div
-                v-for="linked_study in study.linked_studies"
-                :key="linked_study.id"
-                class="badge badge-primary catalogue-badge w-100 py-2 mt-2">
-                <a
-                  :href="getStudyLink(linked_study)"
-                  target="_blank"
-                  class="d-flex justify-content-between align-items-center text-white">
-                  <span class="to-catalogue"></span>
-                  <span>Go to
-                    {{ linked_study.source_catalogue.data.description }}</span>
-                  <font-awesome-icon
-                    :title="`Go to ${linked_study.source_catalogue.data.description}`"
-                    class="to-catalogue"
-                    :icon="['far', 'arrow-alt-circle-right']"/>
-                </a>
+              <hr />
+              <div v-if="study.linked_studies.length" class="d-flex pt-1">
+                <b class="">Available in:</b>
+                <div>
+                  <a
+                    v-for="linked_study in study.linked_studies"
+                    :key="linked_study.id"
+                    :href="getStudyLink(linked_study)"
+                    target="_blank"
+                    class="d-block pl-2 pb-1">
+                    <span class="to-catalogue"></span>
+                    <span>
+                      {{ linked_study.source_catalogue.data.description }}</span>
+                  </a>
+                </div>
               </div>
-            </div>
-            <div v-else class="badge badge-primary catalogue-badge p-1">
-              <a
-                :href="getStudyLink(study)"
-                target="_blank"
-                class="d-flex justify-content-between align-items-center text-white">
-                <span class="to-catalogue"></span>
-                <span>Go to {{ study.source_catalogue.data.description }}</span>
-                <font-awesome-icon
-                  :title="`Go to ${study.source_catalogue.data.description}`"
-                  class="to-catalogue"
-                  :icon="['far', 'arrow-alt-circle-right']"/>
-              </a>
+
+              <div v-else class="d-flex pt-2">
+                <b class="">Available in:</b>
+                <div>
+                  <a
+                    :href="getStudyLink(study)"
+                    target="_blank"
+                    class="d-block pl-2 pb-1">
+                    <span class="to-catalogue"></span>
+                    <span> {{ study.source_catalogue.data.description }}</span>
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -234,24 +230,6 @@ export default {
 </script>
 
 <style scoped>
-.catalogue-badge {
-  font-size: 80%;
-}
-
-.catalogue-badge:first-child {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.catalogue-badge:last-child {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
-.catalogue-badge:not(:first-child):not(:last-child) {
-  border-radius: 0;
-}
-
 .card {
   width: 30%;
   margin-top: 1.5rem;
@@ -270,8 +248,8 @@ export default {
 }
 
 .studies {
-  min-height: 22rem;
-  max-height: 22rem;
+  min-height: 19rem;
+  max-height: 19rem;
 }
 
 .study-title {

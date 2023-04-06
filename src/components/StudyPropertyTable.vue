@@ -16,7 +16,7 @@
                 :href="createHref(study[item.prop])"
                 class="text-break"
                 target="_blank">
-                {{ study[item.prop] || "-" }}</a>
+                {{ study[item.prop] || "Unknown" }}</a>
               <a
                 v-else-if="
                   item.type === 'nested_url' &&
@@ -37,7 +37,7 @@
             </td>
           </template>
         </tr>
-        <tr v-if="study.countries && study.countries.items.length">
+        <tr>
           <th role="label" class="text-nowrap align-top pr-4 property-header">
             {{ study.countries.items.length > 1 ? "Countries:" : "Country:" }}
           </th>
@@ -114,14 +114,14 @@ export default {
     returnValidValue (value) {
       /** to make sure we do not render json */
       if (!value || typeof value === 'object') {
-        return '-'
+        return 'Unknown'
       } else return value
     },
     studyCountries (study) {
       return (
         study.countries?.items
           ?.map((country) => country.data.country_name)
-          .join(', ') || ''
+          .join(', ') || 'Unknown'
       )
     }
   }
