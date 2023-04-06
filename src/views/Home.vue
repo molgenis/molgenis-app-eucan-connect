@@ -60,20 +60,17 @@
         <div
           class="d-flex flex-wrap justify-content-start align-items-start ml-5">
           <div class="card studies" v-for="study of studies" :key="study.id">
-            <div class="card-header text-white bg-primary p-2">
-              <router-link :to="study.id" class="text-white">
-                <span class="d-inline-block study-title">
-                  {{ study.study_name }}
-                </span>
+            <div class="card-header text-white bg-primary study-card-header">
+              <router-link :to="study.id" class="text-white study-title" :title="study.study_name.length > 80 ? study.study_name : ''">
+                {{ truncateTitle(study.study_name) }}
               </router-link>
             </div>
-            <div class="card-body p-2">
+            <div class="card-body study-card-body">
               <study-property-table
                 :studies="[study]"
                 :hideProperties="[
-                  'id',
                   'study_name',
-                  'website',
+                  'source_data',
                   'source_catalogue',
                 ]"/>
             </div>
@@ -194,6 +191,13 @@ export default {
       'setSelectedSources',
       'setSelectedStartYears'
     ]),
+    truncateTitle (title) {
+      if (title.length > 80) {
+        return title.substring(0, 80) + '...'
+      }
+
+      return title
+    },
     filter () {
       this.getStudies(0)
       this.currentPage = 1
@@ -249,9 +253,21 @@ export default {
   margin-top: 1.5rem;
   margin-right: 1.5rem;
 }
+.study-card-header,
+.study-card-body {
+  padding: 0.75rem;
+}
+
+.study-card-header {
+  max-height: 4.5rem;
+  height: 4.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .studies {
   min-height: 22rem;
+  max-height: 22rem;
 }
 
 .study-title {

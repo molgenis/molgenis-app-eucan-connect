@@ -69,10 +69,6 @@ export default {
     properties () {
       return [
         {
-          label: 'Id:',
-          prop: 'id'
-        },
-        {
           label: 'Name:',
           prop: 'study_name'
         },
@@ -83,11 +79,6 @@ export default {
         {
           label: 'Start year:',
           prop: 'start_year'
-        },
-        {
-          label: 'Website:',
-          prop: 'website',
-          type: 'url'
         },
         {
           label: 'Source:',
