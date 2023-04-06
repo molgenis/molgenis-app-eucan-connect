@@ -1,20 +1,24 @@
 <template>
   <div>
     <router-link class="d-inline-block ml-4 mt-3" to="/">Back</router-link>
-    <div class="card mx-auto w-75 mt-4">
-      <div class="card-header text-white bg-primary p-2">
+    <div class="card mx-auto w-75 mt-4 pb-2">
+      <div class="card-header text-white bg-primary p-3 pl-4">
         <h1>{{ study.study_name }}</h1>
         <h2 class="subtitle">Acronym: {{ study.acronym || "-" }}</h2>
       </div>
       <div class="card-body">
         <h3>Objectives</h3>
-        <p class="card-text w-75 text-justify">
+        <p class="card-text text-justify">
           {{ study.objectives || "-" }}
         </p>
-        <study-property-table :studies="[study]" />
+        <study-property-table
+          :studies="[study]"
+          :hideProperties="['study_name', 'acronym', 'source_data']"/>
         <div v-if="similarStudies.length">
           <h3 class="mt-3">This study is also found in other catalogues:</h3>
-          <study-property-table :studies="similarStudies" />
+          <study-property-table
+            :studies="similarStudies"
+            :hideProperties="['acronym', 'source_data']"/>
         </div>
         <div v-else>
           <i class="mt-3 d-block">This study was not found in other catalogues.</i>

@@ -61,7 +61,10 @@
           class="d-flex flex-wrap justify-content-start align-items-start ml-5">
           <div class="card studies" v-for="study of studies" :key="study.id">
             <div class="card-header text-white bg-primary study-card-header">
-              <router-link :to="study.id" class="text-white study-title" :title="study.study_name.length > 80 ? study.study_name : ''">
+              <router-link
+                :to="study.id"
+                class="text-white study-title"
+                :title="study.study_name.length > 80 ? study.study_name : ''">
                 {{ truncateTitle(study.study_name) }}
               </router-link>
             </div>
@@ -69,6 +72,7 @@
               <study-property-table
                 :studies="[study]"
                 :hideProperties="[
+                  'acronym',
                   'study_name',
                   'source_data',
                   'source_catalogue',
