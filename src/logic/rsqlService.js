@@ -62,13 +62,10 @@ export default {
       operands: queryBuilder('source_catalogue.id', sources, '=in=')
     })
   },
-  async startYearQuery (startYears) {
-    if (!startYears || !startYears.length) return ''
+  async startYearQuery (start, end) {
+    if (!start || !end) return ''
 
-    return transformToRSQL({
-      operator: 'OR',
-      operands: queryBuilder('start_year', startYears, '=in=')
-    })
+    return `start_year=ge=${start}&start_year=le=${end}`
   },
   combineQuerys (querys) {
     let query = ''

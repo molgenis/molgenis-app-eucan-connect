@@ -24,12 +24,20 @@
         <div class="card w-100">
           <div class="card-header">Start year</div>
           <div class="card-body filter">
-            <b-check-group
-              v-model="startSelectionModel"
-              :options="startYears"
-              stacked
-              @change="filter">
-            </b-check-group>
+            <label class="w-100">
+              <span class="d-block pb-2">From:</span>
+              <b-form-select
+                v-model="fromStartYearSelectionModel"
+                :options="startYears"
+                @change="filter"></b-form-select>
+            </label>
+            <label class="w-100">
+              <span class="d-block py-2">To:</span>
+              <b-form-select
+                v-model="toStartYearSelectionModel"
+                :options="startYears"
+                @change="filter"></b-form-select>
+            </label>
           </div>
         </div>
         <div class="card w-100">
@@ -87,7 +95,6 @@
                     :href="getStudyLink(linked_study)"
                     target="_blank"
                     class="d-block pl-2 pb-1">
-                    <span class="to-catalogue"></span>
                     <span>
                       {{ linked_study.source_catalogue.data.description }}</span>
                   </a>
@@ -101,7 +108,6 @@
                     :href="getStudyLink(study)"
                     target="_blank"
                     class="d-block pl-2 pb-1">
-                    <span class="to-catalogue"></span>
                     <span> {{ study.source_catalogue.data.description }}</span>
                   </a>
                 </div>
@@ -146,8 +152,7 @@ export default {
       'studiesPageInfo',
       'selectedCountries',
       'selectedSources',
-      'startYears',
-      'selectedStartYears'
+      'startYears'
     ]),
     countrySelectionModel: {
       get () {
@@ -173,12 +178,26 @@ export default {
         this.setSelectedSources(newValue)
       }
     },
-    startSelectionModel: {
+    fromStartYearSelectionModel: {
       get () {
-        return this.selectedStartYears
+        if (!this.startYears.length) return new Date(Date.now()).getFullYear()
+
+        return (
+          this.fromStartYear ||
+          this.startYears[this.startYears.length - 1].value
+        )
       },
       set (newValue) {
-        this.setSelectedStartYears(newValue)
+        this.setFromStartYear(newValue)
+      }
+    },
+    toStartYearSelectionModel: {
+      get () {
+        if (!this.startYears.length) return new Date(Date.now()).getFullYear()
+        return this.toStartYear || this.startYears[0].value
+      },
+      set (newValue) {
+        this.setToStartYear(newValue)
       }
     }
   },
@@ -189,7 +208,8 @@ export default {
       'setSearch',
       'setSelectedCountries',
       'setSelectedSources',
-      'setSelectedStartYears'
+      'setFromStartYear',
+      'setToStartYear'
     ]),
     truncateTitle (title) {
       if (title.length > 80) {
@@ -199,6 +219,13 @@ export default {
       return title
     },
     filter () {
+      /** user is still busy selecting stuff and we have an invalid state */
+      if (
+        parseInt(this.toStartYearSelectionModel) <
+        parseInt(this.fromStartYearSelectionModel)
+      ) {
+        return
+      }
       this.getStudies(0)
       this.currentPage = 1
     },
@@ -263,10 +290,5 @@ export default {
 .info-text {
   font-size: 0.8rem;
   font-style: italic;
-}
-
-.to-catalogue {
-  width: 1.2rem;
-  height: 1.2rem;
 }
 </style>

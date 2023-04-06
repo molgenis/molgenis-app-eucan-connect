@@ -65,7 +65,8 @@ export default new Vuex.Store({
     sourceCatalogues: [],
     selectedSources: [],
     startYears: [],
-    selectedStartYears: []
+    fromStartYear: '',
+    toStartYear: ''
   },
   mutations: {
     setStudies (state, data) {
@@ -85,6 +86,9 @@ export default new Vuex.Store({
         .map(item => ({ text: item.data.start_year, value: item.data.start_year }))
         .filter(unique('value'))
         .sort(sortDesc('value'))
+
+      state.fromStartYear = state.startYears[state.startYears.length - 1].value
+      state.toStartYear = state.startYears[0].value
     },
     setAvailableCountries (state, data) {
       const distinctCountries = [] /** to keep track of added countries */
@@ -113,8 +117,11 @@ export default new Vuex.Store({
     setSelectedSources (state, newSources) {
       state.selectedSources = newSources
     },
-    setSelectedStartYears (state, newYears) {
-      state.selectedStartYears = newYears
+    setFromStartYear (state, newYear) {
+      state.fromStartYear = newYear
+    },
+    setToStartYear (state, newYear) {
+      state.toStartYear = newYear
     }
   },
   actions: {
@@ -123,7 +130,7 @@ export default new Vuex.Store({
         await rsqlService.countryQuery(state.selectedCountries),
         await rsqlService.textSearchQuery(state.search),
         await rsqlService.sourceQuery(state.selectedSources),
-        await rsqlService.startYearQuery(state.selectedStartYears)]
+        await rsqlService.startYearQuery(state.fromStartYear, state.toStartYear)]
 
       const query = rsqlService.combineQuerys(rawQuerys)
 
