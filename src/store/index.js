@@ -148,7 +148,7 @@ export default new Vuex.Store({
       commit('setStudies', studies)
     },
     async getStudy (_, id) {
-      const url = `/api/data/eucan_studies/${id}?expand=populations,countries`
+      const url = `/api/data/eucan_studies/${id}?expand=populations,countries,source_catalogue`
       const response = await api.get(url)
       if (response.data.populations.items.length) {
         for (const item of response.data.populations.items) {
