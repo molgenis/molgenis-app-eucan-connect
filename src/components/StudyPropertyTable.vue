@@ -37,7 +37,7 @@
             </td>
           </template>
         </tr>
-        <tr>
+        <tr v-if="study.countries">
           <th role="label" class="text-nowrap align-top pr-4 property-header">
             {{ study.countries.items.length > 1 ? "Countries:" : "Country:" }}
           </th>
