@@ -1,7 +1,7 @@
 pipeline {
   agent {
     kubernetes {
-      inheritFrom 'node-erbium'
+      inheritFrom 'node-gallium'
     }
   }
   environment {
