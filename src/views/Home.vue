@@ -1,12 +1,12 @@
 <template>
-  <div class="container-fluid pt-2">
+  <div class="container-fluid pt-2 pr-0">
     <div class="row">
       <div class="col-2 pr-0">
         <div class="card w-100">
           <div class="card-header">Search</div>
           <div class="card-body filter">
             <b-input v-model="searchSelectionModel" @keyup="filter" />
-            <b-button class="w-100 mt-2" variant="secondary" @click="filter">Search</b-button>
+            <b-button class="w-100 mt-2" variant="primary" @click="filter">Search</b-button>
             <span class="info-text">Search on title or acronym.</span>
           </div>
         </div>
@@ -24,12 +24,20 @@
         <div class="card w-100">
           <div class="card-header">Start year</div>
           <div class="card-body filter">
-            <b-check-group
-              v-model="startSelectionModel"
-              :options="startYears"
-              stacked
-              @change="filter">
-            </b-check-group>
+            <label class="w-100">
+              <span class="d-block pb-2">From:</span>
+              <b-form-select
+                v-model="fromStartYearSelectionModel"
+                :options="startYears"
+                @change="filter('year')"></b-form-select>
+            </label>
+            <label class="w-100">
+              <span class="d-block py-2">To:</span>
+              <b-form-select
+                v-model="toStartYearSelectionModel"
+                :options="startYears"
+                @change="filter('year')"></b-form-select>
+            </label>
           </div>
         </div>
         <div class="card w-100">
@@ -60,46 +68,50 @@
         <div
           class="d-flex flex-wrap justify-content-start align-items-start ml-5">
           <div class="card studies" v-for="study of studies" :key="study.id">
-            <div class="card-header text-white bg-primary p-2">
-              <router-link :to="study.id" class="text-white">
-                <span class="d-inline-block study-title">
-                  {{ study.study_name }}
-                </span>
+            <div class="card-header text-white bg-primary study-card-header">
+              <router-link
+                :to="study.id"
+                class="text-white study-title"
+                :title="study.study_name.length > 80 ? study.study_name : ''">
+                {{ truncateTitle(study.study_name) }}
               </router-link>
             </div>
-            <div class="card-body">
-              <p v-if="!expand.includes(study.id)" class="card-text">
-                {{ studyDescription(study.objectives) }}
-                <b-link
-                  v-if="descriptionTooLong(study.objectives)"
-                  @click="toggleDescription(study.id)"
-                  class="float-right mt-1">read more</b-link>
-              </p>
-              <p v-else class="card-text">
-                {{ study.objectives }}
-                <b-link
-                  v-if="descriptionTooLong(study.objectives)"
-                  @click="toggleDescription(study.id)"
-                  class="float-right mt-1">read less</b-link>
-              </p>
-            </div>
-            <div class="badge badge-primary catalogue-badge p-1">
-              <a
-                :href="createHref(study.source_catalogue.data.catalogue_url)"
-                target="_blank"
-                class="
-                  d-flex
-                  justify-content-between
-                  align-items-center
-                  text-white
-                ">
-                <span class="to-catalogue"></span>
-                <span>Go to {{ study.source_catalogue.data.description }}</span>
-                <font-awesome-icon
-                  :title="`Go to ${study.source_catalogue.data.description}`"
-                  class="to-catalogue"
-                  :icon="['far', 'arrow-alt-circle-right']"/>
-              </a>
+            <div class="card-body study-card-body">
+              <study-property-table
+                :studies="[study]"
+                :hideProperties="[
+                  'acronym',
+                  'study_name',
+                  'source_data',
+                  'source_catalogue',
+                ]"/>
+              <hr />
+              <div v-if="study.linked_studies.length" class="d-flex pt-1">
+                <b class="">Available in:</b>
+                <div>
+                  <a
+                    v-for="linked_study in study.linked_studies"
+                    :key="linked_study.id"
+                    :href="getStudyLink(linked_study)"
+                    target="_blank"
+                    class="d-block pl-2 pb-1">
+                    <span>
+                      {{ linked_study.source_catalogue.data.description }}</span>
+                  </a>
+                </div>
+              </div>
+
+              <div v-else class="d-flex pt-2">
+                <b class="">Available in:</b>
+                <div>
+                  <a
+                    :href="getStudyLink(study)"
+                    target="_blank"
+                    class="d-block pl-2 pb-1">
+                    <span> {{ study.source_catalogue.data.description }}</span>
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -118,8 +130,13 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
+import StudyPropertyTable from '../components/StudyPropertyTable.vue'
+
 export default {
   name: 'Home',
+  components: {
+    StudyPropertyTable
+  },
   data: function () {
     return {
       expand: [],
@@ -135,8 +152,7 @@ export default {
       'studiesPageInfo',
       'selectedCountries',
       'selectedSources',
-      'startYears',
-      'selectedStartYears'
+      'startYears'
     ]),
     countrySelectionModel: {
       get () {
@@ -162,12 +178,26 @@ export default {
         this.setSelectedSources(newValue)
       }
     },
-    startSelectionModel: {
+    fromStartYearSelectionModel: {
       get () {
-        return this.selectedStartYears
+        if (!this.startYears.length) return new Date(Date.now()).getFullYear()
+
+        return (
+          this.fromStartYear ||
+          this.startYears[this.startYears.length - 1].value
+        )
       },
       set (newValue) {
-        this.setSelectedStartYears(newValue)
+        this.setFromStartYear(newValue)
+      }
+    },
+    toStartYearSelectionModel: {
+      get () {
+        if (!this.startYears.length) return new Date(Date.now()).getFullYear()
+        return this.toStartYear || this.startYears[0].value
+      },
+      set (newValue) {
+        this.setToStartYear(newValue)
       }
     }
   },
@@ -178,25 +208,30 @@ export default {
       'setSearch',
       'setSelectedCountries',
       'setSelectedSources',
-      'setSelectedStartYears'
+      'setFromStartYear',
+      'setToStartYear',
+      'activateYearFilter'
     ]),
-    studyDescription (description) {
-      if (this.descriptionTooLong(description)) {
-        return description.substr(0, 200).trim() + '...'
+    truncateTitle (title) {
+      if (title.length > 70) {
+        return title.substring(0, 70) + '...'
       }
-      return description || 'No description available'
+
+      return title
     },
-    descriptionTooLong (description) {
-      return description && description.length > 200
-    },
-    toggleDescription (id) {
-      if (this.expand.includes(id)) {
-        this.expand.splice(this.expand.indexOf(id), 1)
-      } else {
-        this.expand.push(id)
+    filter (filter) {
+      /** user is still busy selecting stuff and we have an invalid state */
+      if (
+        parseInt(this.toStartYearSelectionModel) <
+        parseInt(this.fromStartYearSelectionModel)
+      ) {
+        return
       }
-    },
-    filter () {
+
+      if (filter === 'year') {
+        this.activateYearFilter()
+      }
+
       this.getStudies(0)
       this.currentPage = 1
     },
@@ -209,26 +244,45 @@ export default {
       } else {
         return url
       }
+    },
+    getStudyLink (study) {
+      if (
+        !study.source_data &&
+        !study.source_catalogue &&
+        !study.source_catalogue.data
+      ) {
+        return ''
+      }
+
+      return this.createHref(
+        study.source_data || study.source_catalogue.data.catalogue_url
+      )
     }
   }
 }
 </script>
 
 <style scoped>
-.catalogue-badge {
-  font-size: 80%;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
 .card {
   width: 30%;
   margin-top: 1.5rem;
   margin-right: 1.5rem;
 }
+.study-card-header,
+.study-card-body {
+  padding: 0.75rem;
+}
+
+.study-card-header {
+  max-height: 4.5rem;
+  height: 4.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .studies {
-  min-height: 22rem;
+  min-height: 19rem;
+  max-height: 19rem;
 }
 
 .study-title {
@@ -242,10 +296,5 @@ export default {
 .info-text {
   font-size: 0.8rem;
   font-style: italic;
-}
-
-.to-catalogue {
-  width: 1.2rem;
-  height: 1.2rem;
 }
 </style>

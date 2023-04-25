@@ -12,6 +12,67 @@ jest.mock('@molgenis/molgenis-api-client', () => ({
             }]
           })
         })
+      case '/api/data/eucan_studies/test_id?expand=populations': {
+        return new Promise((resolve) =>
+          resolve(
+            {
+              data: {
+                id: 'test_study_1',
+                acronym: 'ts1',
+                populations: {
+                  items: [{
+                    data: {
+                      selection_criteria: {
+                        links: {
+                          self: 'study_population_link'
+                        }
+                      }
+                    }
+                  }]
+                }
+              }
+            }
+          ))
+      }
+      case '/api/data/eucan_linkage?filter=studies&size=1000&expand=studies&q=acronym=in=(ts1)': {
+        return new Promise((resolve) =>
+          resolve(
+            {
+              items: [{
+                data: {
+                  id: 'test_study_1',
+                  acronym: 'ts1',
+                  studies: {
+                    items: [{
+                      data: {
+                        id: 'test_Study_1',
+                        selection_criteria: {
+                          links: {
+                            self: 'study_population_link'
+                          }
+                        }
+                      }
+                    }]
+                  }
+                }
+              }]
+            }
+          ))
+      }
+
+      case '/api/data/eucan_studies?q=id=in=(test_Study_1)&expand=source_catalogue': {
+        return new Promise((resolve) =>
+          resolve(
+            {
+              items: [{
+                data: {
+                  id: 'test_study_1',
+                  acronym: 'ts1'
+                }
+              }]
+            }
+          ))
+      }
 
       default:
         return new Promise((resolve) => resolve(
@@ -42,8 +103,8 @@ describe('store', () => {
       store.commit('setStudies', storeMockData.studyDataResponse)
       expect(store.state.studies).toStrictEqual(
         [
-          { id: 'test_study_1' },
-          { id: 'test_study_2' }
+          { id: 'test_study_1', linked_studies: [] },
+          { id: 'test_study_2', linked_studies: [] }
         ])
     })
 

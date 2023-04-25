@@ -1,7 +1,7 @@
 pipeline {
   agent {
     kubernetes {
-      inheritFrom 'node-erbium'
+      inheritFrom 'node-fermium'
     }
   }
   environment {
@@ -88,7 +88,7 @@ pipeline {
                 sh "sleep 15s" // wait for deletion
                 sh "rancher apps install " +
                     "-n ${NAME} " +
-                    "p-vx5vf:molgenis-helm3-molgenis-frontend " +
+                    "c-l4svj:molgenis-molgenis-frontend " +
                     "${NAME} " +
                     "--no-prompt " +
                     "--set environment=dev " +

@@ -2,10 +2,10 @@ server {
   server_name localhost;
 
   location /api {
-    proxy_pass https://dieuwke.gcc.rug.nl;
+    proxy_pass https://test-eucan-connect.molgeniscloud.org;
   }
   location /login {
-    proxy_pass https://dieuwke.gcc.rug.nl;
+    proxy_pass https://test-eucan-connect.molgeniscloud.org;
   }
   location / {
     root /usr/share/nginx/html;
