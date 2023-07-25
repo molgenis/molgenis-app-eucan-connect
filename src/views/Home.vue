@@ -58,7 +58,7 @@
             <span>Number of studies: {{ studiesPageInfo.totalElements }}</span>
           </div>
           <b-pagination
-            v-model="currentPage"
+            v-model="studiesPageInfo.number"
             @change="changePage"
             :total-rows="studiesPageInfo.totalElements"
             :per-page="studiesPageInfo.size"
@@ -117,7 +117,7 @@
         </div>
         <b-pagination
           class="mt-5"
-          v-model="currentPage"
+          v-model="studiesPageInfo.number"
           @change="changePage"
           :total-rows="studiesPageInfo.totalElements"
           :per-page="studiesPageInfo.size"
@@ -139,8 +139,7 @@ export default {
   },
   data: function () {
     return {
-      expand: [],
-      currentPage: 1
+      expand: []
     }
   },
   computed: {
@@ -233,7 +232,6 @@ export default {
       }
 
       this.getStudies(0)
-      this.currentPage = 1
     },
     changePage (newPage) {
       this.getStudies(newPage - 1)

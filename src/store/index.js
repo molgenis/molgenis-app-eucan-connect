@@ -58,7 +58,7 @@ async function AddLinkedStudies (response) {
 export default new Vuex.Store({
   state: {
     studies: [],
-    studiesPageInfo: {},
+    studiesPageInfo: { number: 1 },
     countries: [],
     selectedCountries: [],
     search: '',
@@ -77,6 +77,7 @@ export default new Vuex.Store({
       state.studies = viewmodels
 
       /**  Data for use in pagination. */
+      data.page.number++ /** add +1 because bootstrap pagination */
       state.studiesPageInfo = data.page
     },
     setCatalogueSources (state, data) {
