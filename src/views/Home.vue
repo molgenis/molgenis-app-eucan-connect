@@ -212,7 +212,7 @@ export default {
         return this.toStartYear || this.startYears[0].value
       },
       set (newValue) {
-        this.setFromStartYear(newValue)
+        this.setToStartYear(newValue)
       }
     }
   },
@@ -237,8 +237,7 @@ export default {
     filter (filter) {
       /** user is still busy selecting stuff and we have an invalid state */
       if (
-        parseInt(this.
-        ) <
+        parseInt(this.toStartYearSelectionModel) <
         parseInt(this.fromStartYearSelectionModel)
       ) {
         return
