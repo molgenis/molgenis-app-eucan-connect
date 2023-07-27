@@ -11,7 +11,7 @@ Vue.use(Vuex)
  * because some studies are folded into one card if they are linked
  */
 async function _queryStudies (page, query) {
-  let url = `/api/data/eucan_studies?size=15&page=${page}&expand=source_catalogue,countries&sort=study_name`
+  let url = `/api/data/eucan_studies?size=15&page=${page}&expand=source_catalogue,countries&sort=label`
 
   if (query) url += query
 
