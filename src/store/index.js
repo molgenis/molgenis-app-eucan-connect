@@ -78,6 +78,7 @@ export default new Vuex.Store({
 
       /**  Data for use in pagination. */
       data.page.number++ /** add +1 because bootstrap pagination */
+
       state.studiesPageInfo = data.page
     },
     setCatalogueSources (state, data) {
