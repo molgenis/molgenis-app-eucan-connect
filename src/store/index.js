@@ -11,7 +11,7 @@ Vue.use(Vuex)
  * because some studies are folded into one card if they are linked
  */
 async function _queryStudies (page, query) {
-  let url = `/api/data/eucan_studies?size=15&page=${page}&expand=source_catalogue,countries&sort=study_name`
+  let url = `/api/data/eucan_studies?size=15&page=${page}&expand=source_catalogue,countries&sort=label`
 
   if (query) url += query
 
@@ -58,7 +58,7 @@ async function AddLinkedStudies (response) {
 export default new Vuex.Store({
   state: {
     studies: [],
-    studiesPageInfo: {},
+    studiesPageInfo: { number: 1 },
     countries: [],
     selectedCountries: [],
     search: '',
@@ -77,6 +77,8 @@ export default new Vuex.Store({
       state.studies = viewmodels
 
       /**  Data for use in pagination. */
+      data.page.number++ /** add +1 because bootstrap pagination */
+
       state.studiesPageInfo = data.page
     },
     setCatalogueSources (state, data) {

@@ -65,7 +65,7 @@ export default {
   async startYearQuery (active, start, end) {
     if (!active || !start || !end) return ''
 
-    return `start_year=ge=${start}&start_year=le=${end}`
+    return `start_year=ge=${start};start_year=le=${end}`
   },
   combineQuerys (querys) {
     let query = ''

@@ -58,7 +58,7 @@
             <span>Number of studies: {{ studiesPageInfo.totalElements }}</span>
           </div>
           <b-pagination
-            v-model="currentPage"
+            v-model="studiesPageInfo.number"
             @change="changePage"
             :total-rows="studiesPageInfo.totalElements"
             :per-page="studiesPageInfo.size"
@@ -117,30 +117,45 @@
         </div>
         <b-pagination
           class="mt-5"
-          v-model="currentPage"
+          v-model="studiesPageInfo.number"
           @change="changePage"
           :total-rows="studiesPageInfo.totalElements"
           :per-page="studiesPageInfo.size"
           align="center"
           aria-controls="studies"></b-pagination>
       </div>
+      <simple-modal :open="!cookieHasBeenSet" :bodyClass="'w-50 mt-5'">
+        <h2>EUCAN Connect Catalogue</h2>
+        <hr />
+        <p>
+          This project received funding from the European Union's Horizon 2020
+          research and innovation programme under grant agreement No 824989.
+        </p>
+        <template v-slot:modal-footer>
+          <button @click="setExplanatoryTextSeenCookie" class="btn btn-primary w-100">
+            Browse the catalogue
+          </button>
+        </template>
+      </simple-modal>
     </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
+import SimpleModal from '../components/SimpleModal.vue'
 import StudyPropertyTable from '../components/StudyPropertyTable.vue'
 
 export default {
   name: 'Home',
   components: {
-    StudyPropertyTable
+    StudyPropertyTable,
+    SimpleModal
   },
   data: function () {
     return {
       expand: [],
-      currentPage: 1
+      cookieHasBeenSet: false
     }
   },
   computed: {
@@ -233,7 +248,6 @@ export default {
       }
 
       this.getStudies(0)
-      this.currentPage = 1
     },
     changePage (newPage) {
       this.getStudies(newPage - 1)
@@ -257,7 +271,23 @@ export default {
       return this.createHref(
         study.source_data || study.source_catalogue.data.catalogue_url
       )
+    },
+    setExplanatoryTextSeenCookie () {
+      if (!this.cookieHasBeenSet) {
+        const cookieValue = 'textSeen=true;'
+        document.cookie += document.cookie.length
+          ? ` ${cookieValue}`
+          : cookieValue
+        this.cookieHasBeenSet = true
+      }
     }
+  },
+  mounted () {
+    this.cookieHasBeenSet =
+      document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('textSeen='))
+        ?.split('=')[1] !== undefined
   }
 }
 </script>
